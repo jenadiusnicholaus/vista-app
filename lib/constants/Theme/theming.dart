@@ -3,7 +3,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:vista/constants/consts.dart';
 
 class CustomTheme {
-  Color lightPrimaryColor = HexColor('#19bc99');
+  Color lightPrimaryColor = HexColor('#249e41');
   Color darkPrimaryColor = HexColor('#1f9b71');
 
   static ThemeData lightTheme = ThemeData(
