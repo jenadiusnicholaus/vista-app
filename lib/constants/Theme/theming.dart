@@ -60,6 +60,7 @@ class CustomTheme {
             MaterialStateProperty.all<Color>(Colors.white), //actual text color
       ),
     ),
+
     // - - - - - - - - - - - - - - -  - - - - -
   );
 }

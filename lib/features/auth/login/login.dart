@@ -21,12 +21,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Container(
-          // color: Colors.black,
           margin:
-              const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 130),
-          height: double.infinity,
+              const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
           width: double.infinity,
           child: SingleChildScrollView(
             reverse: true,
@@ -37,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    padding: EdgeInsets.only(top: 60, bottom: 20),
                     child: Text(
                       'Sign or Sign Up',
                       style: TextStyle(
@@ -73,6 +71,12 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.blue,
                               ),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: .9,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                           languageCode: "en",
                           onChanged: (phone) {
@@ -95,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         // button
 
                         const SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
 
                         ElevatedButton(
@@ -111,6 +115,10 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           child: const Text('Continue'),
+                        ),
+
+                        const SizedBox(
+                          height: 30,
                         ),
 
                         SizedBox(
@@ -140,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
 
                         const SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
 
                         Container(

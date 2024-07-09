@@ -4,7 +4,14 @@ import 'package:get/get.dart';
 import 'package:vista/constants/Theme/theming.dart';
 import 'package:vista/features/auth/login/login.dart';
 
-void main() {
+// import 'package:intl/intl_standalone.dart'
+//     if (dart.library.html) 'package:intl/intl_browser.dart';
+
+import 'features/home.dart';
+
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await findSystemLocale();
   runApp(const MyApp());
 }
 
@@ -41,33 +48,5 @@ class _MyAppState extends State<MyApp> {
             themeMode: isDarkModeEnabled ? ThemeMode.dark : ThemeMode.light,
           );
         });
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
-      ),
-    );
   }
 }
