@@ -7,7 +7,7 @@ import 'package:vista/features/auth/login/login.dart';
 // import 'package:intl/intl_standalone.dart'
 //     if (dart.library.html) 'package:intl/intl_browser.dart';
 
-import 'features/home.dart';
+import 'home_pages/home.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +23,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? token = "";
+  String? token = "ksksk";
   bool isDarkModeEnabled = false;
   @override
   Widget build(BuildContext context) {

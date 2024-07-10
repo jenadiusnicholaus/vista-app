@@ -62,22 +62,6 @@ class _LoginPageState extends State<LoginPage> {
                           focusNode: _focusNode,
                           initialCountryCode: "TZ",
                           controller: _phoneNumberController,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            labelText: 'eg: 652 123 456',
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: .9,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
                           languageCode: "en",
                           onChanged: (phone) {
                             print(phone.completeNumber);
@@ -105,11 +89,11 @@ class _LoginPageState extends State<LoginPage> {
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   const SnackBar(
+                              //     content: Text('Processing Data'),
+                              //   ),
+                              // );
                               // RegisterPage();
                               Get.to(() => const RegisterPage());
                             }

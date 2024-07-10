@@ -22,13 +22,6 @@ class CustomTextFormFied extends StatelessWidget {
         labelText: labelText,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        border: const OutlineInputBorder(),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            width: .9,
-            // color: Colors.grey,
-          ),
-        ),
         suffixIcon: suffixIcon,
       ),
       validator: validator,

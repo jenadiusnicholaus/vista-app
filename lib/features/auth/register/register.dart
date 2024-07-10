@@ -132,18 +132,6 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                           focusNode: _focusNode,
                           initialCountryCode: "TZ",
                           controller: _phoneNumberController,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            labelText: 'eg: 652 123 456',
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: .9,
-                                // color: Colors.grey,
-                              ),
-                            ),
-                          ),
                           languageCode: "en",
                           onChanged: (phone) {
                             print(phone.completeNumber);
@@ -234,6 +222,9 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                               "Birthday",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 8,
                             ),
                             Stack(
                               alignment: Alignment.centerRight,

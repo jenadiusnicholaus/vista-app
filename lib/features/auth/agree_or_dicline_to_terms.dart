@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../home.dart';
+import '../../home_pages/home.dart';
 
 class AgrreOrDeclineTerms extends StatefulWidget {
   const AgrreOrDeclineTerms({super.key});
