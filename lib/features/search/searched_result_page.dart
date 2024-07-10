@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:vista/home_pages/explore_page.dart';
-import 'package:vista/home_pages/inbox.dart';
 
-import '../features/auth/profile.dart';
-import 'trips.dart';
-import 'wishlist_page.dart';
-
-class HomePage extends StatefulWidget {
+class SearchedResults extends StatefulWidget {
   final String title;
-  const HomePage({super.key, required this.title});
+  const SearchedResults({super.key, required this.title});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _SearchedResultsState createState() => _SearchedResultsState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _SearchedResultsState extends State<SearchedResults> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
     ExplorePage(),
     WishlistsPage(),
-    TripPage(),
+    TripsPage(),
     InboxPage(),
     ProfilePage(),
   ];
@@ -65,5 +60,41 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
     );
+  }
+}
+
+class WishlistsPage extends StatelessWidget {
+  const WishlistsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Wishlists Page');
+  }
+}
+
+class TripsPage extends StatelessWidget {
+  const TripsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Trips Page');
+  }
+}
+
+class InboxPage extends StatelessWidget {
+  const InboxPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Inbox Page');
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Profile Page');
   }
 }

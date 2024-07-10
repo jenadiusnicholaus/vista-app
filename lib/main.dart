@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vista/constants/Theme/theming.dart';
 import 'package:vista/features/auth/login/login.dart';
+import 'package:vista/features/search/search_property.dart';
+import 'package:vista/features/search/searched_result_page.dart';
 
 // import 'package:intl/intl_standalone.dart'
 //     if (dart.library.html) 'package:intl/intl_browser.dart';
@@ -38,6 +40,10 @@ class _MyAppState extends State<MyApp> {
             routes: {
               '/login': (context) => const LoginPage(),
               '/home': (context) => const HomePage(title: 'Vista'),
+              '/search_properties': (context) => const SearchProperty(),
+              "/searched_results": (context) => const SearchedResults(
+                    title: "Searched Results",
+                  ),
             },
             debugShowCheckedModeBanner: false,
             home: token == ""

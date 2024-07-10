@@ -289,16 +289,33 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
 
       // persistentFooterAlignment: AlignmentDirectional.
       persistentFooterButtons: [
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _snap = !_snap;
-              if (_snap) {
-                _floating = true;
-              }
-            });
-          },
-          child: const Text('Reserve'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Text("35000 Tsh / night",
+                    style: Theme.of(context).textTheme.titleSmall),
+                const Text(
+                  "25 May - 26 May",
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 0.5.sw, // 50% of screen width
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _snap = !_snap;
+                    if (_snap) {
+                      _floating = true;
+                    }
+                  });
+                },
+                child: const Text('Reserve'),
+              ),
+            ),
+          ],
         )
       ],
     );
