@@ -19,7 +19,6 @@ class ExplorePage extends StatefulWidget {
 
 class _ExplorePageState extends State<ExplorePage>
     with SingleTickerProviderStateMixin {
-  // Example categories and properties
   final List<Category> categories = scategories;
   final List<Property> properties = sampleProperties;
   late TabController _tabController;
@@ -33,9 +32,6 @@ class _ExplorePageState extends State<ExplorePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: categories.length, vsync: this);
-    // _pagingController.addPageRequestListener((pageKey) {
-    //   _fetchCategories(pageKey);
-    // });
     _pagingController.appendLastPage(properties);
   }
 
@@ -47,74 +43,58 @@ class _ExplorePageState extends State<ExplorePage>
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ScreenUtil
+    ScreenUtil.init(context, designSize: Size(360, 690));
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Padding(
-            padding: EdgeInsets.only(right: 5.w, top: 4.h),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100.0),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(
-                        0.5), // Shadow color with some transparency
-                    spreadRadius: 1, // Spread radius
-                    blurRadius: 7, // Blur radius
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: GestureDetector(
+          elevation: 0,
+          title: Container(
+            margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(
+                  90.0.r), // Use ScreenUtil for responsive radius
+            ),
+            child: GestureDetector(
                 onTap: () async {
                   log('Search tapped');
                   Get.toNamed('/search_properties');
                 },
-                child: TextField(
-                  enabled: false,
-                  decoration: InputDecoration(
-                    hintText: 'Where to?',
-                    prefixIcon: const Icon(Icons.search_outlined,
-                        size: 24, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                  ),
-                ),
-              ),
-            ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.search_outlined, color: Colors.grey),
+                    Text('Search',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        )),
+                  ],
+                )),
           ),
-          // expandedHeight: 160.0,
           leading: IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              // do something
-            },
+            icon: const Icon(Icons.menu, color: Colors.grey),
+            onPressed: () {},
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
+              icon: const Icon(Icons.filter_alt_outlined, color: Colors.grey),
               onPressed: () async {},
             ),
           ],
           bottom: TabBar(
             tabAlignment: TabAlignment.start,
             controller: _tabController,
-            isScrollable: true, // Enable scrolling
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-
+            isScrollable: true,
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10.h),
             tabs: categories
-                .map((Category category) =>
-                    Tab(icon: Icon(category.icon), text: category.name))
+                .map((Category category) => Tab(
+                      icon: Icon(
+                        category.icon,
+                        color: Colors.grey,
+                      ),
+                      text: category.name,
+                    ))
                 .toList(),
           ),
         ),
@@ -124,22 +104,26 @@ class _ExplorePageState extends State<ExplorePage>
               .map((Category category) => ListView.builder(
                     itemCount: properties.length,
                     itemBuilder: (BuildContext context, int index) {
-                      // final Property property = properties[index];
                       return SingleChildScrollView(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 8.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.0.w, vertical: 8.0.h),
                           child: Column(
                             children: [
                               GridView.builder(
                                 shrinkWrap: true,
-                                physics:
-                                    const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                                physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 1,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: ScreenUtil().screenWidth > 800
+                                      ? 4
+                                      : ScreenUtil().screenWidth > 600
+                                          ? 3
+                                          : ScreenUtil().screenWidth > 400
+                                              ? 2
+                                              : 1,
+                                  crossAxisSpacing: 10.w,
+                                  mainAxisSpacing: 10.h,
                                 ),
                                 itemCount: properties.length,
                                 itemBuilder: (context, index) {

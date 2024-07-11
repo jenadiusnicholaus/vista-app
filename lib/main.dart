@@ -25,12 +25,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? token = "ksksk";
-  bool isDarkModeEnabled = false;
+  String? token = "";
+  bool isDarkModeEnabled = true;
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(750, 1334),
+        designSize: const Size(360, 690),
         builder: (BuildContext context, Widget? child) {
           return GetMaterialApp(
             supportedLocales: const <Locale>[

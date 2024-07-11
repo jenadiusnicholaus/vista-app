@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:vista/features/auth/register/register.dart';
+import 'package:vista/home_pages/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
             child: Form(
               key: _formKey,
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const Padding(
@@ -42,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 20, fontWeight: FontWeight.normal),
                     ),
                   ),
-                  // phone number
 
                   SizedBox(
                     width: double.infinity,
@@ -95,7 +94,9 @@ class _LoginPageState extends State<LoginPage> {
                               //   ),
                               // );
                               // RegisterPage();
-                              Get.to(() => const RegisterPage());
+                              Get.to(() => const HomePage(
+                                    title: "Vista",
+                                  ));
                             }
                           },
                           child: const Text('Continue'),
@@ -153,7 +154,9 @@ class _LoginPageState extends State<LoginPage> {
                             buttonType: SocialLoginButtonType.generalLogin,
                             imagePath: "assets/images/email.png",
                             imageURL: "URL",
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => const RegisterPage());
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -175,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
                             text: 'Continue with google',
                             borderRadius: 5,
                             buttonType: SocialLoginButtonType.google,
-                            // imageURL: "URL",
                             onPressed: () {},
                           ),
                         ),

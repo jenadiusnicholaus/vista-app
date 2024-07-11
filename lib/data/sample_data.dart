@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Location {
   final String title;
@@ -75,7 +76,10 @@ final List<Category> scategories = [
     name: 'Amazing stays',
     icon: Icons.home_outlined,
   ),
-  Category(name: 'Experiences', icon: Icons.explore_outlined),
+  Category(
+    name: 'Experiences',
+    icon: Icons.explore_outlined,
+  ),
   Category(name: 'Restaurants', icon: Icons.restaurant_outlined),
   Category(name: 'Adventures', icon: Icons.directions_bike_outlined),
   Category(name: 'Order Goods', icon: Icons.shopping_cart_outlined),
@@ -91,15 +95,6 @@ final List<Map<String, dynamic>> ratings = [
   {"rating": 1, "label": "Poor"},
 ];
 
-// final List<Location> locations = [
-//   Location(
-//     name: "Central Park",
-//     address: "New York, NY, USA",
-//     imageUrl: "assets/images/hotel_map.jpeg",
-//   ),
-//   // Add more locations as needed
-// ];
-
 final List<Location> locations = [
   Location(
     title: 'Bagamoyo',
@@ -111,25 +106,26 @@ final List<Location> locations = [
     subtitle: 'Beautiful beaches',
     imageUrl: 'assets/images/images.jpg',
   ),
-
+  Location(
+    title: 'Arusha',
+    subtitle: 'Safari city',
+    imageUrl: 'assets/images/villa.jpeg',
+  ),
   Location(
     title: 'Zanzibar',
     subtitle: 'Beautiful beaches',
     imageUrl: 'assets/images/images.jpg',
   ),
-
   Location(
-    title: 'Zanzibar',
-    subtitle: 'Beautiful beaches',
+    title: 'Dodoma',
+    subtitle: 'Capital city',
     imageUrl: 'assets/images/images.jpg',
   ),
-
   Location(
-    title: 'Zanzibar',
-    subtitle: 'Beautiful beaches',
-    imageUrl: 'assets/images/images.jpg',
+    title: 'Mwanza',
+    subtitle: 'Rock city',
+    imageUrl: 'assets/images/villa2.webp',
   ),
-  // Add more locations here
 ];
 
 class Trip {
@@ -208,8 +204,6 @@ class InboxMessage {
   InboxMessage({required this.id, required this.body, required this.date});
 }
 
-// Now, you can pass initialMessages to ChatPage
-// Static list of inbox messages for testing
 List<InboxMessage> inboxMessages = [
   InboxMessage(id: '1', body: 'Hello, how are you?', date: DateTime.now()),
   InboxMessage(

@@ -104,19 +104,19 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
-                            Text("2 gests",
+                            Text("2 Geusts",
                                 style: Theme.of(context).textTheme.titleSmall),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(".",
                                 style: Theme.of(context).textTheme.titleSmall),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text("2 Bedrooms",
                                 style: Theme.of(context).textTheme.titleSmall),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(".",
                                 style: Theme.of(context).textTheme.titleSmall),
-                            SizedBox(width: 10),
-                            Text("1 DHs",
+                            const SizedBox(width: 10),
+                            Text("1 DH",
                                 style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
@@ -136,8 +136,9 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
-                  Divider(),
+                  const SizedBox(height: 3),
+                  const Divider(),
+                  const SizedBox(height: 3),
                   Row(
                     children: [
                       CircleAvatar(
@@ -155,10 +156,23 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                                 style: Theme.of(context).textTheme.titleSmall),
                             Row(
                               children: [
-                                const Icon(Icons.verified_user),
-                                Text("Verified",
-                                    style:
-                                        Theme.of(context).textTheme.titleSmall),
+                                Icon(
+                                    widget.property.hostVerified
+                                        ? Icons.verified
+                                        : Icons.cancel_outlined,
+                                    color: widget.property.hostVerified
+                                        ? Colors.green
+                                        : Colors.red,
+                                    size: 40),
+                                Text(
+                                    widget.property.hostVerified
+                                        ? "Verified"
+                                        : "Not Verified",
+                                    style: TextStyle(
+                                      color: widget.property.hostVerified
+                                          ? Colors.green
+                                          : Colors.red,
+                                    )),
                               ],
                             ),
                             Padding(
@@ -169,17 +183,17 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleSmall),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Text(".",
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleSmall),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Text("4.8 Rating",
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleSmall),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                 ],
                               ),
                             ),
@@ -188,13 +202,10 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
-                  Divider(),
+                  const SizedBox(height: 30),
+                  const Divider(),
                   ListTile(
-                    leading: Icon(
-                      Icons.home_outlined,
-                      size: 80.sp,
-                    ),
+                    leading: Icon(Icons.home_outlined, size: 40),
                     contentPadding: EdgeInsets.all(0),
                     title: Text("Entire Home",
                         style: Theme.of(context).textTheme.titleSmall),
@@ -203,11 +214,11 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   ),
 
                   // This host committed to Airbnb's 5-step enhanced cleaning process. Show more
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   ListTile(
                     leading: Icon(
                       Icons.cleaning_services_outlined,
-                      size: 80.sp,
+                      size: 40,
                     ),
                     contentPadding: EdgeInsets.all(0),
                     title: Text("Enhanced Clean",
@@ -218,11 +229,11 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   ),
 
                   // Self check-in
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   ListTile(
                     leading: Icon(
                       Icons.lock_clock_outlined,
-                      size: 80.sp,
+                      size: 40,
                     ),
                     contentPadding: EdgeInsets.all(0),
                     title: Text("Self Check-in",
@@ -233,11 +244,11 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   ),
 
                   // Wifi
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   ListTile(
                     leading: Icon(
                       Icons.wifi_outlined,
-                      size: 80.sp,
+                      size: 40,
                     ),
                     contentPadding: EdgeInsets.all(0),
                     title: Text("Wifi",
@@ -246,40 +257,39 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                         'Guests often search for this popular amenity. Show more.',
                         style: Theme.of(context).textTheme.caption),
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   // Kitchen
                   ListTile(
                     leading: Icon(
                       Icons.kitchen_outlined,
-                      size: 80.sp,
+                      size: 40,
                     ),
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     title: Text("Kitchen",
                         style: Theme.of(context).textTheme.titleSmall),
                     subtitle: Text(
                         'Guests often search for this popular amenity. Show more.',
                         style: Theme.of(context).textTheme.caption),
                   ),
-                  SizedBox(height: 30),
-                  Divider(),
+                  const SizedBox(height: 30),
+                  const Divider(),
 
                   // review card
 
-                  Container(
-                      height: 250.h,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: reviews.length,
-                        itemBuilder: (context, index) {
-                          return ReviewCard(review: reviews[index]);
-                        },
-                      )),
+                  SizedBox(
+                    height: 120.h,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: reviews.length,
+                      itemBuilder: (context, index) {
+                        return ReviewCard(review: reviews[index]);
+                      },
+                    ),
+                  ),
 
-                  // more description
-
-                  // location card
-
-                  // amenities card
+                  // More description card
+                  // Location card
+                  // Amenities card
                 ],
               ),
             ),
@@ -375,7 +385,13 @@ class ReviewCard extends StatelessWidget {
               }),
             ),
             const SizedBox(height: 8),
-            Text(review.reviewText),
+            Text(review.reviewText,
+                maxLines: 3,
+                style: const TextStyle(
+                  fontSize: 16,
+                  wordSpacing: 1.5,
+                ),
+                softWrap: true),
           ],
         ),
       ),
