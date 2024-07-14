@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:vista/features/auth/register/bloc/registration_bloc.dart';
-
 import '../../../constants/custom_form_field.dart';
-import '../agree_or_dicline_to_terms.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -529,9 +526,7 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                           ),
                         ));
                       }
-                      if (_formKey.currentState!.validate() &&
-                          checked &&
-                          _selectedDate.value != null) {
+                      if (_formKey.currentState!.validate() && checked) {
                         BlocProvider.of<RegistrationBloc>(context)
                             .add(RegistrationEventInitial(
                           phoneNumber: _completePhoneNumber,

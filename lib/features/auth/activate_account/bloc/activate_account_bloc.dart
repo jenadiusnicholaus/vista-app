@@ -53,6 +53,7 @@ class ActivateAccountBloc
         var response = await activateAccountRepository.resendOTP(
           email: event.email,
         );
+        print(response);
         emit(ActivateAccountSuccess('Code resent successfully'));
       } catch (e, stackTrace) {
         log(e.toString());

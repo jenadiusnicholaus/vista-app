@@ -6,7 +6,6 @@ import 'package:meta/meta.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/auth/forget_password/models.dart';
 
-import '../confirme_reset_password_page.dart';
 import '../repository.dart';
 
 part 'confirm_reset_password_event.dart';

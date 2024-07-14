@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:pinput/pinput.dart';
 import 'package:vista/features/auth/activate_account/bloc/activate_account_bloc.dart';
 import 'package:vista/features/auth/register/models.dart';
 import 'package:vista/shared/widgets/custom_pin_put.dart';

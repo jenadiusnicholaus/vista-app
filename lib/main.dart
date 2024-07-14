@@ -11,6 +11,7 @@ import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/search/search_property.dart';
 import 'package:vista/features/search/searched_result_page.dart';
+import 'package:vista/shared/utils/local_storage.dart';
 import 'features/auth/activate_account/bloc/activate_account_bloc.dart';
 import 'features/auth/confirm_reset_password/repository.dart';
 import 'features/auth/forget_password/bloc/forget_password_bloc.dart';
@@ -22,20 +23,25 @@ import 'home_pages/home.dart';
 import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
 
+import 'shared/token_handler.dart';
+
 void main() async {
+  String? token = await LocalStorage.read(key: "access_token");
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  bool isTokenExpired = TokenHandler.isExpired(token);
+  runApp(MyApp(isTokenExpired: isTokenExpired));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool isTokenExpired;
+
+  const MyApp({super.key, required this.isTokenExpired});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  String? token = "";
   bool isDarkModeEnabled = true;
   @override
   Widget build(BuildContext context) {
@@ -103,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                 },
                 debugShowCheckedModeBanner: false,
-                home: token == ""
+                home: widget.isTokenExpired
                     ? const EmailLogin()
                     : const HomePage(title: 'Vista'),
                 theme: CustomTheme.lightTheme,

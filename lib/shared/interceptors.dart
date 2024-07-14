@@ -85,6 +85,7 @@ class TokenInterceptor extends Interceptor {
     );
 
     if (response.statusCode == 200) {
+      LocalStorage.write(key: 'access_token', value: response.data['access']);
       return response;
     } else {
       throw Exception('Failed to refresh token');
