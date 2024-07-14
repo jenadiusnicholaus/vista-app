@@ -51,13 +51,11 @@ class CustomTheme {
       border: OutlineInputBorder(
         borderSide: BorderSide(
           width: .9,
-          // color: Colors.grey,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
           width: .9,
-          // color: Colors.grey,
         ),
       ),
     ),
@@ -68,14 +66,20 @@ class CustomTheme {
       space: 0,
     ),
 
-    // - - - - -Light Theme Elevated Button Styles - - - - -
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         minimumSize: MaterialStateProperty.all(
           const Size(double.infinity, 45),
         ),
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) => _CustomTheme.lightPrimaryColor),
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return Colors.grey; 
+            }
+            return _CustomTheme
+                .lightPrimaryColor; 
+          },
+        ),
         shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
           (_) {
             return RoundedRectangleBorder(borderRadius: kBorderRadius);
@@ -86,10 +90,9 @@ class CustomTheme {
               const TextStyle(fontWeight: FontWeight.normal, fontSize: 20),
         ),
         foregroundColor:
-            MaterialStateProperty.all<Color>(Colors.white), //actual text color
+            MaterialStateProperty.all<Color>(Colors.white), 
       ),
     ),
-    // - - - - - - - - - - - - - - -  - - - - -
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -146,7 +149,14 @@ class CustomTheme {
           const Size(double.infinity, 45),
         ),
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) => _CustomTheme.lightPrimaryColor),
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return Colors.grey; // Specify the disabled color here
+            }
+            return _CustomTheme
+                .lightPrimaryColor; // Default color for enabled state
+          },
+        ),
         shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
           (_) {
             return RoundedRectangleBorder(borderRadius: kBorderRadius);
@@ -163,8 +173,8 @@ class CustomTheme {
 
     iconTheme: const IconThemeData(color: Colors.white),
 
-    // - - - - - - - - - - - - - - -  - - - - -
   );
 }
 
 CustomTheme _CustomTheme = CustomTheme();
+ 
