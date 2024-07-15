@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vista/home_pages/explore_page.dart';
 import 'package:vista/home_pages/inbox.dart';
 
-import '../features/auth/profile.dart';
+import '../features/auth/user_profile/user_profile_page.dart';
 import 'trips.dart';
 import 'wishlist_page.dart';
 

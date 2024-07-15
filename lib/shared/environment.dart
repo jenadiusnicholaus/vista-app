@@ -19,6 +19,8 @@ class Environment {
   static String LOCAL_DEV_BASE_URL =
       "http://192.168.1.181:8000/api/$API_VERSION/";
 
+  // authentication
+
   String REFRESH_TOKEN = "authentication/token/refresh/";
   String PHONE_NUMBER_AUTH = "authentication/phone-number-auth/";
   String VERIFY_PHONE_NUMBER =
@@ -30,6 +32,10 @@ class Environment {
   String PHONE_NUMBER_VERIFY = "authentication/verify-phone-number-and-login/";
   String FORGET_PASSWORD_URL = "authentication/get-reset-password-token/";
   String CONFIRM_RESET_PASSWORD = "authentication/confirm-reset-password/";
+
+  // user data
+
+  String USER_PROFILE = "user-data/user-profile/";
 
   static EnvironmentType environmentType = EnvironmentType.local_dev;
 

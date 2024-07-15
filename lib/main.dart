@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vista/data/sample_data.dart';
 import 'package:vista/features/auth/activate_account/repository.dart';
 import 'package:vista/features/auth/confirm_reset_password/bloc/confirm_reset_password_bloc.dart';
 import 'package:vista/features/auth/email_login/bloc/email_login_bloc.dart';
 import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/features/auth/phone_number/bloc/phone_number_auth_bloc.dart';
+import 'package:vista/features/auth/user_profile/repository.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/search/search_property.dart';
@@ -19,6 +21,7 @@ import 'features/auth/forget_password/repository.dart';
 import 'features/auth/phone_number/repository.dart';
 import 'features/auth/register/bloc/registration_bloc.dart';
 import 'features/auth/register/repository.dart';
+import 'features/auth/user_profile/bloc/user_profile_bloc.dart';
 import 'home_pages/home.dart';
 import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
@@ -26,8 +29,8 @@ import 'shared/environment.dart';
 import 'shared/token_handler.dart';
 
 void main() async {
-  String? token = await LocalStorage.read(key: "access_token");
   WidgetsFlutterBinding.ensureInitialized();
+  String? token = await LocalStorage.read(key: "access_token");
   bool isTokenExpired = TokenHandler.isExpired(token);
   runApp(MyApp(isTokenExpired: isTokenExpired));
 }
@@ -42,7 +45,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isDarkModeEnabled = true;
+  bool isDarkModeEnabled = false;
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -64,6 +67,9 @@ class _MyAppState extends State<MyApp> {
                 apiCall: DioApiCall(), environment: Environment.instance)),
         RepositoryProvider<ConfirmResetPasswordRepository>(
             create: (context) => ConfirmResetPasswordRepository(
+                apiCall: DioApiCall(), environment: Environment.instance)),
+        RepositoryProvider<UserProfileRepository>(
+            create: (context) => UserProfileRepository(
                 apiCall: DioApiCall(), environment: Environment.instance)),
       ],
       child: MultiBlocProvider(
@@ -91,6 +97,10 @@ class _MyAppState extends State<MyApp> {
               create: (context) => ConfirmResetPasswordBloc(
                   confirmResetPasswordRepository:
                       context.read<ConfirmResetPasswordRepository>())),
+          BlocProvider<UserProfileBloc>(
+              create: (context) => UserProfileBloc(
+                  userProfileRepository:
+                      context.read<UserProfileRepository>())),
         ],
         child: ScreenUtilInit(
             designSize: const Size(360, 690),
