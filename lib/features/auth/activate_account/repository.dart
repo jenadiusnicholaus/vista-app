@@ -39,15 +39,7 @@ class ActivateAccountRepository {
     );
     if (response.statusCode == 200) {
       return response.data;
-    } else if (response.statusCode == 400) {
-      if (response.data['error'] != null) {
-        throw Exception(response.data['error']);
-      } else if (response.data['message'] != null) {
-        throw Exception(response.data['message']);
-      } else if (response.data['detail'] != null) {
-        throw Exception(response.data['detail']);
-      }
-
+    } else {
       throw Exception(response.data);
     }
   }

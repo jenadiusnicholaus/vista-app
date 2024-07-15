@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:vista/data/sample_data.dart';
 import 'package:vista/features/auth/activate_account/repository.dart';
 import 'package:vista/features/auth/confirm_reset_password/bloc/confirm_reset_password_bloc.dart';
 import 'package:vista/features/auth/email_login/bloc/email_login_bloc.dart';

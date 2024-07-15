@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:vista/features/auth/activate_account/repository.dart';
@@ -38,7 +39,7 @@ class ActivateAccountBloc
       } catch (e, stackTrace) {
         log(e.toString());
         log(stackTrace.toString());
-        emit(ActivateAccountFailure(e.toString()));
+        emit(ActivateAccountFailure(message: e.toString()));
       }
     });
 
@@ -55,10 +56,20 @@ class ActivateAccountBloc
         );
         print(response);
         emit(ActivateAccountSuccess('Code resent successfully'));
-      } catch (e, stackTrace) {
-        log(e.toString());
-        log(stackTrace.toString());
-        emit(ActivateAccountFailure(e.toString()));
+      } catch (e) {
+        String? errorMessage = 'An unexpected error occurred';
+
+        if (e is DioException) {
+          // Check if the error is because of a bad request or other HTTP errors
+          if (e.response != null) {
+            // Attempt to extract the error message from the response
+            errorMessage = e.response?.data['message'] ?? 'An error occurred';
+          } else {
+            // Error due to sending the request or receiving the response
+            errorMessage = e.message;
+          }
+        }
+        emit(ResendCodeFailure( errorMessage));
       }
     });
   }

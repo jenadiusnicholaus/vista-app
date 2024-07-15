@@ -13,8 +13,8 @@ final class ActivateAccountSuccess extends ActivateAccountState {
 }
 
 final class ActivateAccountFailure extends ActivateAccountState {
-  final String message;
-  ActivateAccountFailure(this.message);
+  final String? message;
+  ActivateAccountFailure({required this.message});
 }
 
 final class ResendCodeLoading extends ActivateAccountState {}
@@ -25,6 +25,6 @@ class ResendCodeSuccess extends ActivateAccountState {
 }
 
 class ResendCodeFailure extends ActivateAccountState {
-  final String message;
+  final String? message;
   ResendCodeFailure(this.message);
 }

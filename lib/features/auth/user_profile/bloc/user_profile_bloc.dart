@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 import 'package:vista/features/auth/user_profile/models.dart';
 import 'package:vista/features/auth/user_profile/repository.dart';
 
+import '../../../../shared/error_handler.dart';
+
 part 'user_profile_event.dart';
 part 'user_profile_state.dart';
 
@@ -17,7 +19,8 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
             await userProfileRepository.getUserProfile();
         emit(UserProfileLoaded(userProfileModel));
       } catch (e) {
-        emit(UserProfileError(e.toString()));
+        String errorMessage = ExceptionHandler.handleError(e);
+        emit(UserProfileError(errorMessage));
       }
     });
 

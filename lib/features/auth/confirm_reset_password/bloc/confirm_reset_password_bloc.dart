@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/auth/forget_password/models.dart';
 
+import '../../../../shared/error_handler.dart';
 import '../repository.dart';
 
 part 'confirm_reset_password_event.dart';
@@ -32,8 +31,9 @@ class ConfirmResetPasswordBloc
         emit(ConfirmResetPasswordSuccess(response: response));
         Get.to(() => const EmailLogin());
       } catch (e) {
-        log(e.toString());
-        emit(ConfirmResetPasswordFailure(e.toString()));
+        String errorMessage = ExceptionHandler.handleError(e);
+
+        emit(ConfirmResetPasswordFailure(errorMessage));
       }
     });
   }

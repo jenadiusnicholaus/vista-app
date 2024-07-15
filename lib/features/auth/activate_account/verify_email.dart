@@ -69,7 +69,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             setState(() {
               isSubmiting = false;
             });
-            Get.snackbar('Error', state.message);
+            Get.snackbar('Error', state.message!);
           }
         },
         child: Container(

@@ -37,7 +37,7 @@ class RegistrationRepository {
       RegistrationModel registrationModel =
           RegistrationModel.fromJson(response.data);
       return registrationModel;
-    } else if (response.statusCode == 400) {
+    } else {
       throw Exception(response.data);
     }
   }

@@ -6,6 +6,10 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     log('Request to ${options.method} ${options.uri}');
+    log('Request data: ${options.data}');
+    log('Request headers: ${options.headers}');
+    log('Request query parameters: ${options.queryParameters}');
+
     // Optionally log headers, body, etc.
     super.onRequest(options, handler);
   }
@@ -13,7 +17,10 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     log('Response from ${response.requestOptions.method} ${response.requestOptions.uri}: ${response.statusCode}');
-    // Optionally log headers, body, etc.
+    log('Response data: ${response.data}');
+    log('Response headers: ${response.headers}');
+    log('Response status message: ${response.statusMessage}');
+
     super.onResponse(response, handler);
   }
 

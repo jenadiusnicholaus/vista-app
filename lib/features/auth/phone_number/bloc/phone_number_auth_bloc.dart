@@ -5,6 +5,7 @@ import 'package:vista/features/auth/email_login/models.dart';
 import 'package:vista/features/auth/phone_number/verify_phone_number.dart';
 
 import '../../../../home_pages/home.dart';
+import '../../../../shared/error_handler.dart';
 import '../../../../shared/utils/local_storage.dart';
 import '../models.dart';
 import '../repository.dart';
@@ -56,7 +57,9 @@ class PhoneNumberAuthBloc
         LocalStorage.write(key: "refresh_token", value: loginModel.refresh!);
         Get.to(() => const HomePage(title: "vista"));
       } catch (e) {
-        emit(PhoneNumberAuthVerifyFailure(e.toString()));
+        String errorMessage = ExceptionHandler.handleError(e);
+
+        emit(PhoneNumberAuthVerifyFailure(errorMessage));
       }
     });
   }

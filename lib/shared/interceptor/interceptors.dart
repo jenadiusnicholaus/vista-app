@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:vista/shared/environment.dart';
@@ -18,15 +19,12 @@ class TokensInterceptors extends Interceptor {
 
     List<String> ignoreSubUrls = [
       'authentication/',
-
-      // Add more substrings to ignore here
     ];
 
     // Flag to indicate if the current URL should be ignored
     bool shouldIgnore =
         ignoreSubUrls.any((subUrl) => options.uri.toString().contains(subUrl));
-    // This is a placeholder for actual token fetching logic
-
+    log('Request to $shouldIgnore => ${options.uri}');
     if (token != null) {
       if (!shouldIgnore) {
         options.headers['Authorization'] = 'Bearer $token';

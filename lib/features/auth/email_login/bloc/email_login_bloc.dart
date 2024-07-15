@@ -6,6 +6,8 @@ import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/home_pages/home.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
+import '../../../../shared/error_handler.dart';
+
 part 'email_login_event.dart';
 part 'email_login_state.dart';
 
@@ -31,7 +33,9 @@ class EmailLoginBloc extends Bloc<EmailLoginEvent, EmailLoginState> {
         emit(EmailLoginSuccess(userModel: loginModel));
         Get.to(() => const HomePage(title: "vista"));
       } catch (e) {
-        emit(EmailLoginFailure(e.toString()));
+        String errorMessage = ExceptionHandler.handleError(e);
+
+        emit(EmailLoginFailure(errorMessage));
       }
     });
   }

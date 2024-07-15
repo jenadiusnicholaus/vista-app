@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 
+import '../../../../shared/error_handler.dart';
 import '../../confirm_reset_password/confirme_reset_password_page.dart';
 import '../repository.dart';
 
@@ -30,8 +29,8 @@ class ForgetPasswordBloc
 
         Get.to(() => const ConfirmResetPasswordPage());
       } catch (e) {
-        log(e.toString());
-        emit(ForgetPasswordFailure(e.toString()));
+        String errorMessage = ExceptionHandler.handleError(e);
+        emit(ForgetPasswordFailure(errorMessage));
       }
     });
   }
