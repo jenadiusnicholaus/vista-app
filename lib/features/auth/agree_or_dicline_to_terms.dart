@@ -56,7 +56,7 @@ class _AgrreOrDeclineTermsState extends State<AgrreOrDeclineTerms> {
                       // if (_formKey.currentState!.validate()) {
                       // }
 
-                      Get.to(() => const HomePage(title: 'Vista'));
+                      Get.to(() => const HomePage());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,

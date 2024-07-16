@@ -55,7 +55,7 @@ class PhoneNumberAuthBloc
         ));
         LocalStorage.write(key: "access_token", value: loginModel.access!);
         LocalStorage.write(key: "refresh_token", value: loginModel.refresh!);
-        Get.to(() => const HomePage(title: "vista"));
+        Get.offAll(const HomePage());
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
 

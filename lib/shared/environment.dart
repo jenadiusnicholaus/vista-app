@@ -32,6 +32,7 @@ class Environment {
   String PHONE_NUMBER_VERIFY = "authentication/verify-phone-number-and-login/";
   String FORGET_PASSWORD_URL = "authentication/get-reset-password-token/";
   String CONFIRM_RESET_PASSWORD = "authentication/confirm-reset-password/";
+  String LOGOUT_URL = "authentication/token/blacklist/";
 
   // user data
 

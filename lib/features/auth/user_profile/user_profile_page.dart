@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:vista/features/auth/email_login/bloc/email_login_bloc.dart';
+import 'package:vista/shared/utils/local_storage.dart';
 
 import 'bloc/user_profile_bloc.dart';
 
@@ -12,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isLoggingOut = false;
   @override
   void initState() {
     BlocProvider.of<UserProfileBloc>(context).add(GetUserProfileEvent());
@@ -77,6 +80,50 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: const TextStyle(
                         fontSize: 16,
                       ),
+                    ),
+                  ),
+                  // logut btn
+
+                  TextButton(
+                    onPressed: isLoggingOut
+                        ? null
+                        : () async {
+                            String? refresh_token =
+                                await LocalStorage.read(key: 'refresh_token');
+
+                            BlocProvider.of<EmailLoginBloc>(context)
+                                .add(LogoutUserEvent(
+                              refreshToken: refresh_token.toString(),
+                            ));
+                          },
+                    child: BlocConsumer<EmailLoginBloc, EmailLoginState>(
+                      listener: (context, state) {
+                        if (state is LogoutLoading) {
+                          setState(() {
+                            isLoggingOut = true;
+                          });
+                        }
+                        if (state is LogoutSuccess) {
+                          setState(() {
+                            isLoggingOut = false;
+                          });
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is LogoutLoading) {
+                          return const SpinKitWave(
+                            color: Colors.red,
+                            size: 20.0,
+                          );
+                        }
+                        return const Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                          ),
+                        );
+                      },
                     ),
                   ),
                   // Add more widgets as needed

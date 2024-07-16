@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:vista/features/auth/activate_account/repository.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
+
+import '../../../../shared/error_handler.dart';
 
 part 'activate_account_event.dart';
 part 'activate_account_state.dart';
@@ -36,10 +39,13 @@ class ActivateAccountBloc
           // Navigate to the next page
           Get.to(() => const EmailLogin());
         }
-      } catch (e, stackTrace) {
-        log(e.toString());
-        log(stackTrace.toString());
-        emit(ActivateAccountFailure(message: e.toString()));
+      } catch (e) {
+        var errorMessage = ExceptionHandler.handleError(e);
+        Get.snackbar('Error', errorMessage,
+            snackPosition: SnackPosition.TOP,
+            icon: const Icon(Icons.error, color: Colors.red));
+        emit(ResendCodeFailure(errorMessage));
+        ;
       }
     });
 
@@ -51,25 +57,17 @@ class ActivateAccountBloc
 
       try {
         // Call the API to resend the code
-        var response = await activateAccountRepository.resendOTP(
+        await activateAccountRepository.resendOTP(
           email: event.email,
         );
-        print(response);
         emit(ActivateAccountSuccess('Code resent successfully'));
       } catch (e) {
-        String? errorMessage = 'An unexpected error occurred';
+        var errorMessage = ExceptionHandler.handleError(e);
+        Get.snackbar('Error', errorMessage,
+            snackPosition: SnackPosition.TOP,
+            icon: const Icon(Icons.error, color: Colors.red));
 
-        if (e is DioException) {
-          // Check if the error is because of a bad request or other HTTP errors
-          if (e.response != null) {
-            // Attempt to extract the error message from the response
-            errorMessage = e.response?.data['message'] ?? 'An error occurred';
-          } else {
-            // Error due to sending the request or receiving the response
-            errorMessage = e.message;
-          }
-        }
-        emit(ResendCodeFailure( errorMessage));
+        emit(ResendCodeFailure(errorMessage));
       }
     });
   }

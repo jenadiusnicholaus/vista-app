@@ -25,4 +25,18 @@ class EmailLoginRepository {
       throw Exception(response.data);
     }
   }
+
+  // logout user
+
+  Future<dynamic> logoutUser({required String? refreshToken}) async {
+    var response = await apiCall.post(
+      environment.getBaseUrl + environment.LOGOUT_URL,
+      data: {"refresh": refreshToken},
+    );
+    if (response.statusCode == 200) {
+      return response.data;
+    } else {
+      throw Exception(response.data);
+    }
+  }
 }

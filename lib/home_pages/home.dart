@@ -1,14 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:vista/home_pages/explore_page.dart';
 import 'package:vista/home_pages/inbox.dart';
 
 import '../features/auth/user_profile/user_profile_page.dart';
+import '../features/location/device_current_location.dart';
 import 'trips.dart';
 import 'wishlist_page.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
-  const HomePage({super.key, required this.title});
+  // final String title;
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,6 +32,20 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  _getUserCurrentLocation() async {
+    try {
+      final position = await determinePosition();
+      log('Current Position: $position');
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
   }
 
   @override

@@ -36,6 +36,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       registrationModel = state.registrationModel;
     }
 
+    pinController = TextEditingController();
+
     super.initState();
   }
 

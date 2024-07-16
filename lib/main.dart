@@ -21,6 +21,7 @@ import 'features/auth/phone_number/repository.dart';
 import 'features/auth/register/bloc/registration_bloc.dart';
 import 'features/auth/register/repository.dart';
 import 'features/auth/user_profile/bloc/user_profile_bloc.dart';
+import 'features/location/device_current_location.dart';
 import 'home_pages/home.dart';
 import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
@@ -29,6 +30,7 @@ import 'shared/token_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await requestLocationPermission();
   String? token = await LocalStorage.read(key: "access_token");
   bool isTokenExpired = TokenHandler.isExpired(token);
   runApp(MyApp(isTokenExpired: isTokenExpired));
@@ -111,7 +113,7 @@ class _MyAppState extends State<MyApp> {
                 ],
                 routes: {
                   '/login': (context) => const EmailLogin(),
-                  '/home': (context) => const HomePage(title: 'Vista'),
+                  '/home': (context) => const HomePage(),
                   '/search_properties': (context) => const SearchProperty(),
                   "/searched_results": (context) => const SearchedResults(
                         title: "Searched Results",
@@ -120,7 +122,7 @@ class _MyAppState extends State<MyApp> {
                 debugShowCheckedModeBanner: false,
                 home: widget.isTokenExpired
                     ? const EmailLogin()
-                    : const HomePage(title: 'Vista'),
+                    : const HomePage(),
                 theme: CustomTheme.lightTheme,
                 darkTheme: CustomTheme.darkTheme,
                 themeMode: isDarkModeEnabled ? ThemeMode.dark : ThemeMode.light,

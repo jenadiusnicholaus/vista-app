@@ -1,13 +1,11 @@
-
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:vista/features/auth/register/bloc/registration_bloc.dart';
+import 'package:vista/features/auth/register/models.dart';
 import '../../../constants/custom_form_field.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -16,6 +14,7 @@ class RegisterPage extends StatefulWidget {
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
+
 
 class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
   final _formKey = GlobalKey<FormState>();
@@ -33,15 +32,16 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
   var isLoading = false;
   var checked = false;
   bool _isSubmitting = false;
+  ValidationErrorModel? errorModel;
 
-  RegistrationBloc? registrationBloc;
+  // RegistrationBloc? registrationBloc;
 
   @override
   String? get restorationId => 'register_page';
 
   @override
   void initState() {
-    registrationBloc = BlocProvider.of<RegistrationBloc>(context);
+    // registrationBloc = BlocProvider.of<RegistrationBloc>(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -122,11 +122,14 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
 
   @override
   void dispose() {
-    _phoneNumberController.dispose();
-    _focusNode.dispose();
-    _selectedDate.dispose();
-    _restorableDatePickerRouteFuture.dispose();
-    registrationBloc!.close();
+    try {
+      _phoneNumberController.dispose();
+      _focusNode.dispose();
+      _selectedDate.dispose();
+      _restorableDatePickerRouteFuture.dispose();
+    } catch (e) {
+      log(e.toString());
+    }
 
     super.dispose();
   }
@@ -147,8 +150,9 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
         } else if (state is RegistrationFailure) {
           setState(() {
             _isSubmitting = false;
+            _formKey.currentState!.validate() == false;
+            errorModel = state.errorModel;
           });
-          Get.snackbar('Error', state.message);
         }
       },
       child: SafeArea(
@@ -197,15 +201,35 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                             initialCountryCode: "TZ",
                             controller: _phoneNumberController,
                             languageCode: "en",
+                            validator: (value) {
+                              if (value == null || value.completeNumber == '') {
+                                return 'Please enter your phone number';
+                              } else if (errorModel != null) {
+                                if (errorModel!.message!.phoneNumber != null) {
+                                  return errorModel!.message!.phoneNumber![0];
+                                }
+                              }
+                            },
                             onChanged: (phone) {
                               setState(() {
                                 _completePhoneNumber = phone.completeNumber;
                               });
                             },
-                            onCountryChanged: (country) {
-                              print('Country changed to: ' + country.name);
-                            },
+                            onCountryChanged: (country) {},
                           ),
+                          errorModel?.message?.phonenumber != null &&
+                                  errorModel!.message!.phonenumber!.isNotEmpty
+                              ? Row(
+                                  children: [
+                                    Text(
+                                      errorModel?.message?.phonenumber?[0],
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(),
                           const Text(
                             "We’ll call or text you to confirm your number. Standard message and data rates apply.",
                             style: TextStyle(fontSize: 11),
@@ -368,15 +392,20 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                                 height: 8,
                               ),
                               CustomTextFormField(
-                                controller: _emailController,
-                                labelText: 'eg: example@gmail.com',
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your email';
-                                  }
-                                  return null;
-                                },
-                              ),
+                                  controller: _emailController,
+                                  labelText: 'eg: example@gmail.com',
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your email';
+                                    } else if (errorModel != null &&
+                                        errorModel!.message!.email != null) {
+                                      for (var error
+                                          in errorModel!.message!.email!) {
+                                        return error;
+                                      }
+                                    }
+                                    return null;
+                                  }),
                             ],
                           ),
 
@@ -403,6 +432,12 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your password';
+                                  } else if (errorModel != null &&
+                                      errorModel!.message!.password != null) {
+                                    for (var error
+                                        in errorModel!.message!.password!) {
+                                      return error;
+                                    }
                                   }
                                   return null;
                                 },
@@ -539,6 +574,7 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                           agreedToTerms: checked,
                         ));
                       }
+                      log('Agree and Continue');
 
                       // Get.to(() => const AgrreOrDeclineTerms());
                     },
@@ -560,86 +596,3 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
     );
   }
 }
-
-// class DatePickerExample extends StatefulWidget {
-//   const DatePickerExample({super.key, this.restorationId});
-
-//   final String? restorationId;
-
-//   @override
-//   State<DatePickerExample> createState() => _DatePickerExampleState();
-// }
-
-// /// RestorationProperty objects can be used because of RestorationMixin.
-// class _DatePickerExampleState extends State<DatePickerExample>
-//     with RestorationMixin {
-//   // In this example, the restoration ID for the mixin is passed in through
-//   // the [StatefulWidget]'s constructor.
-//   @override
-//   String? get restorationId => widget.restorationId;
-
-//   final RestorableDateTime _selectedDate =
-//       RestorableDateTime(DateTime(2021, 7, 25));
-//   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
-//       RestorableRouteFuture<DateTime?>(
-//     onComplete: _selectDate,
-//     onPresent: (NavigatorState navigator, Object? arguments) {
-//       return navigator.restorablePush(
-//         _datePickerRoute,
-//         arguments: _selectedDate.value.millisecondsSinceEpoch,
-//       );
-//     },
-//   );
-
-//   @pragma('vm:entry-point')
-//   static Route<DateTime> _datePickerRoute(
-//     BuildContext context,
-//     Object? arguments,
-//   ) {
-//     return DialogRoute<DateTime>(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return DatePickerDialog(
-//           restorationId: 'date_picker_dialog',
-//           initialEntryMode: DatePickerEntryMode.calendarOnly,
-//           initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
-//           firstDate: DateTime(2021),
-//           lastDate: DateTime(2022),
-//         );
-//       },
-//     );
-//   }
-
-//   @override
-//   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-//     registerForRestoration(_selectedDate, 'selected_date');
-//     registerForRestoration(
-//         _restorableDatePickerRouteFuture, 'date_picker_route_future');
-//   }
-
-//   void _selectDate(DateTime? newSelectedDate) {
-//     if (newSelectedDate != null) {
-//       setState(() {
-//         _selectedDate.value = newSelectedDate;
-//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           content: Text(
-//               'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
-//         ));
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: OutlinedButton(
-//           onPressed: () {
-//             _restorableDatePickerRouteFuture.present();
-//           },
-//           child: const Text('Open Date Picker'),
-//         ),
-//       ),
-//     );
-//   }
-// }

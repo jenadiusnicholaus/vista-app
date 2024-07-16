@@ -14,6 +14,6 @@ final class RegistrationSuccess extends RegistrationState {
 }
 
 final class RegistrationFailure extends RegistrationState {
-  final String message;
-  RegistrationFailure(this.message);
+  final dynamic errorModel;
+  RegistrationFailure({this.errorModel});
 }
