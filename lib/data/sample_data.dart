@@ -65,26 +65,34 @@ final List<Property> sampleProperties = List.generate(20, (index) {
 });
 
 class Category {
+  final dynamic id;
   final String name;
   final IconData icon;
 
-  Category({required this.name, required this.icon});
+  Category({required this.id, required this.name, required this.icon});
 }
 
 final List<Category> scategories = [
   Category(
+    id: 'all',
+    name: 'All',
+    icon: Icons.home_outlined,
+  ),
+  Category(
+    id: '1',
     name: 'Amazing stays',
     icon: Icons.home_outlined,
   ),
   Category(
+    id: '2',
     name: 'Experiences',
     icon: Icons.explore_outlined,
   ),
-  Category(name: 'Restaurants', icon: Icons.restaurant_outlined),
-  Category(name: 'Adventures', icon: Icons.directions_bike_outlined),
-  Category(name: 'Order Goods', icon: Icons.shopping_cart_outlined),
-  Category(name: 'Retals', icon: Icons.car_rental_outlined),
-  Category(name: 'Buy Property', icon: Icons.home_outlined),
+  Category(id: '3', name: 'Restaurants', icon: Icons.restaurant_outlined),
+  Category(id: '4', name: 'Adventures', icon: Icons.directions_bike_outlined),
+  Category(id: '5', name: 'Order Goods', icon: Icons.shopping_cart_outlined),
+  Category(id: '6', name: 'Retals', icon: Icons.car_rental_outlined),
+  Category(id: '7', name: 'Buy Property', icon: Icons.home_outlined),
 ];
 
 final List<Map<String, dynamic>> ratings = [

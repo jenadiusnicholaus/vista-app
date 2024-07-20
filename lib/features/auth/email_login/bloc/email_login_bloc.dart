@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/auth/email_login/models.dart';
 import 'package:vista/features/auth/email_login/repository.dart';
-import 'package:vista/home_pages/home.dart';
+import 'package:vista/features/home_pages/home/home.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
 import '../../../../shared/error_handler.dart';

@@ -17,7 +17,7 @@ class Environment {
       "https://e-shop-api-dev.azurewebsites.net/api/";
   static const String PROD_BASE_URL = "";
   static String LOCAL_DEV_BASE_URL =
-      "http://192.168.1.181:8000/api/$API_VERSION/";
+      "http://192.168.124.42:8000/api/$API_VERSION/";
 
   // authentication
 
@@ -35,8 +35,14 @@ class Environment {
   String LOGOUT_URL = "authentication/token/blacklist/";
 
   // user data
-
   String USER_PROFILE = "user-data/user-profile/";
+  String MY_FAVORITE_PROPERTY = "user-data/my-favorite-property/";
+
+  // properties
+  String PROPERTIES = "property/property-list/";
+  String PROPERTY_DETAIL = "property/property-details/";
+  String PROPERTY_CATEGORIES = "property/categories/";
+  String PROPERTY_REVIEW = "property/review-property/";
 
   static EnvironmentType environmentType = EnvironmentType.local_dev;
 

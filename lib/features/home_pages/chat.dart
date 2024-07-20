@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/sample_data.dart';
+import '../../data/sample_data.dart';
 
 class ChatPage extends StatefulWidget {
   final List<ChatMessage> initialMessages; // Accept initial messages

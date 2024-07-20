@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:vista/features/auth/email_login/models.dart';
 import 'package:vista/features/auth/phone_number/verify_phone_number.dart';
 
-import '../../../../home_pages/home.dart';
+import '../../../home_pages/home/home.dart';
 import '../../../../shared/error_handler.dart';
 import '../../../../shared/utils/local_storage.dart';
 import '../models.dart';

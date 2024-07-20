@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vista/features/auth/email_login/bloc/email_login_bloc.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
+import '../../../shared/utils/custom_spinkit_loaders.dart';
 import 'bloc/user_profile_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -37,9 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           } else if (state is UserProfileError) {
-            return Center(
-              child: Text(state.error),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (state is UserProfileLoaded) {
             return Center(
               child: Column(
@@ -132,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           } else {
             return const Center(
-              child: Text(''),
+              child: CircularProgressIndicator(),
             );
           }
         },

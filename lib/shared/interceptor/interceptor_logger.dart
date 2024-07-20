@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:vista/shared/error_handler.dart';
 
 class LoggingInterceptor extends Interceptor {
   @override
@@ -28,6 +29,9 @@ class LoggingInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) {
     log('Error in ${err.requestOptions.method} ${err.requestOptions.uri}: ${err.message}');
     // Optionally log error details, response, etc.
+    if (err.response!.statusCode != 401) {
+      ExceptionHandler.handleError(err);
+    }
     super.onError(err, handler);
   }
 }

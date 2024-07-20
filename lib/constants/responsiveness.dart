@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResponsiveLayout {
   static bool isSmallScreen(BuildContext context) {
@@ -13,4 +14,14 @@ class ResponsiveLayout {
   static bool isLargeScreen(BuildContext context) {
     return MediaQuery.of(context).size.width >= 1200;
   }
+}
+
+crossAxisCount() {
+  return ScreenUtil().screenWidth > 800
+      ? 4
+      : ScreenUtil().screenWidth > 600
+          ? 3
+          : ScreenUtil().screenWidth > 400
+              ? 2
+              : 1;
 }

@@ -5,10 +5,15 @@ import 'package:dio/dio.dart';
 import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
+import '../api_call/api.dart';
+import '../token_handler.dart';
+import 'repository.dart';
+
 class TokensInterceptors extends Interceptor {
   Environment environment = Environment.instance;
   Dio dio = Dio(BaseOptions(baseUrl: Environment.instance.getBaseUrl));
   String? token;
+  bool isTokenExpired = false;
   TokensInterceptors();
 
   @override
@@ -16,20 +21,27 @@ class TokensInterceptors extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     // Ideally, token should be fetched from a secure storage or state management solution
     token = await getTokenFromStorage();
+    if (token != null) {
+      isTokenExpired = TokenHandler.isExpired(token);
+    }
 
-    List<String> ignoreSubUrls = [
-      'authentication/',
-    ];
+    List<String> ignoreSubUrls = ['authentication/'];
+    if (isTokenExpired) {
+      ignoreSubUrls.add("property/");
+    } else {}
+
+    Uri uri = options.uri;
+
+    // Normalize the base URL if necessary, e.g., removing query parameters or fragments
+    String path = uri.path; // Directly use the path component of the URI
 
     // Flag to indicate if the current URL should be ignored
     bool shouldIgnore =
-        ignoreSubUrls.any((subUrl) => options.uri.toString().contains(subUrl));
-    log('Request to $shouldIgnore => ${options.uri}');
-    if (token != null) {
-      if (!shouldIgnore) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-      // options.headers["Authorization"] = "Bearer $token";
+        ignoreSubUrls.any((subUrl) => path.startsWith('/api/v1/$subUrl'));
+    log('Request to ignore: $shouldIgnore => ${options.uri}');
+
+    if (token != null && !shouldIgnore) {
+      options.headers['Authorization'] = 'Bearer $token';
     } else {
       options.headers.remove("Authorization");
     }
@@ -45,11 +57,24 @@ class TokensInterceptors extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
+      log('Token expired, refreshing token...');
       try {
-        await refreshToken();
+        InterceptorRepository repo = InterceptorRepository(
+          apiCall: DioApiCall(),
+          environment: environment,
+        );
+        await repo.refreshToken();
+        // Fetch the refreshed token
+
+        //  this method retrieves the updated token
+        String? refreshedToken = await getTokenFromStorage();
+        if (refreshedToken == null) {
+          throw Exception("Failed to retrieve refreshed token");
+        }
+
         final opts = Options(
           method: err.requestOptions.method,
-          headers: {"Authorization": "Bearer $token"},
+          headers: {"Authorization": "Bearer $refreshedToken"},
         );
         final clonedRequest = await dio.request(
           err.requestOptions.path,
@@ -59,36 +84,11 @@ class TokensInterceptors extends Interceptor {
         );
         handler.resolve(clonedRequest);
       } catch (e) {
+        log('Failed to refresh token: $e');
         handler.next(err);
       }
     } else {
       handler.next(err);
-    }
-  }
-
-  Future<Response<dynamic>> refreshToken() async {
-    // Implement token refresh logic here, e.g., make a request to the refresh token endpoint
-    // This is a placeholder implementation
-    var headers = {'Content-Type': 'application/json'};
-    var refreshToken = await LocalStorage.read(key: 'refresh_token');
-    var data = json.encode({
-      "refresh": refreshToken,
-    });
-    var dio = Dio();
-    var response = await dio.request(
-      environment.getBaseUrl + environment.REFRESH_TOKEN,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
-
-    if (response.statusCode == 200) {
-      LocalStorage.write(key: 'access_token', value: response.data['access']);
-      return response;
-    } else {
-      throw Exception('Failed to refresh token');
     }
   }
 

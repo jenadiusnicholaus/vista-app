@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_data.dart';
+import '../../data/sample_data.dart';
 
 class TripPage extends StatelessWidget {
   const TripPage({super.key});

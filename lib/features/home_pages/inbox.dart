@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
-import '../data/sample_data.dart';
+import '../../data/sample_data.dart';
 import 'chat.dart'; // Add flutter_slidable package for swipe actions
 
 class InboxPage extends StatefulWidget {
