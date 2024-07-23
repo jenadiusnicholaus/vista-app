@@ -375,7 +375,7 @@ class _PropertyItemsState extends State<PropertyItems> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SizedBox(
-                                width: 140.w,
+                                width: 200.w,
                                 child: Text(
                                   widget.property.name ?? '',
                                   style: const TextStyle(
@@ -393,7 +393,7 @@ class _PropertyItemsState extends State<PropertyItems> {
                                         widget.property.rating ?? 0.0,
                                     direction: Axis.horizontal,
                                     allowHalfRating: true,
-                                    itemCount: 5,
+                                    itemCount: 1,
                                     ratingWidget: RatingWidget(
                                       full: const Icon(Icons.star,
                                           color: Colors.amber),
@@ -409,6 +409,7 @@ class _PropertyItemsState extends State<PropertyItems> {
                                       print(rating);
                                     },
                                   ),
+                                  Text("${widget.property.rating ?? 0.0}")
                                 ],
                               ),
                             ],

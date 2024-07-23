@@ -1,7 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+
+import 'add_booking_infos_page.dart';
+import 'bloc/booking_bloc.dart';
+import 'edit_booking_infos_page.dart';
+
+final today = DateUtils.dateOnly(DateTime.now());
 
 class BookingPage extends StatefulWidget {
   final dynamic property;
@@ -12,6 +18,25 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  String _selectedPaymentMethod = '';
+
+  final _scrollController = ScrollController();
+
+  List<DateTime>? dateTime;
+
+  @override
+  initState() {
+    super.initState();
+
+    BlocProvider.of<BookingBloc>(context).add(GetMyBooking());
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +63,8 @@ class _BookingPageState extends State<BookingPage> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.property.description),
+                      Text(widget.property.description,
+                          maxLines: 2, overflow: TextOverflow.ellipsis),
                       RatingBar.builder(
                         initialRating: widget.property.rating,
                         minRating: 1,
@@ -64,27 +90,71 @@ class _BookingPageState extends State<BookingPage> {
             ),
             // card to show trip schedule details
 
-            const Card(
+            Card(
               child: ListTile(
-                title: Text("Trip Schedule"),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      title: Text("Schedule",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text("April 2022 - June 2022"),
-                      trailing: Icon(Icons.edit),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    ListTile(
-                      title: Text("Gests",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      contentPadding: EdgeInsets.zero,
-                      subtitle: Text("2 Adults, 1 Child"),
-                      trailing: Icon(Icons.edit),
-                    ),
-                  ],
+                title: const Text("Trip Schedule"),
+                subtitle: BlocBuilder<BookingBloc, BookingState>(
+                  builder: (context, state) {
+                    if (state is GetBookingLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (state is GetBookingFailed) {
+                      return Text(
+                        state.error,
+                        style: const TextStyle(
+                          color: Colors.red,
+                        ),
+                      );
+                    }
+
+                    if (state is GetBookingLoaded) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: const Text("Schedule",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                "${state.booking.checkIn} - ${state.booking?.checkOut}"),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          ListTile(
+                            title: const Text("Gests",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            contentPadding: EdgeInsets.zero,
+                            subtitle: Text(
+                                "${state.booking.adult} Adults, ${state.booking.children} Child"),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return const Text("No booking details found");
+                  },
+                ),
+                trailing: BlocBuilder<BookingBloc, BookingState>(
+                  builder: (context, state) {
+                    if (state is GetBookingLoaded) {
+                      return IconButton(
+                          icon: const Icon(Icons.edit_calendar),
+                          onPressed: () {
+                            Get.off(() => EditBookingInfos(
+                                  property: widget.property,
+                                  booking: state.booking,
+                                ));
+                          });
+                    }
+                    return IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        // _addBookingDialog();
+                        Get.off(
+                            () => AddBookingPage(property: widget.property));
+                      },
+                    );
+                  },
                 ),
               ),
             ),
@@ -155,44 +225,57 @@ class _BookingPageState extends State<BookingPage> {
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                backgroundImage:
-                                    AssetImage('assets/images/mpesa.png'),
-                              ),
-                              Radio(
-                                value: 'mpesa',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundImage: AssetImage(
-                                    'assets/images/airtellmoney.jpeg'),
-                                backgroundColor: Colors.grey,
-                                // child: const Icon(Icons.money),
-                              ),
-                              Radio(
-                                value: 'airtelmoney ',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/tigopesa.png'),
-                                backgroundColor: Colors.grey,
-                                // child: const Icon(Icons.money),
-                              ),
-                              Radio(
-                                value: 'tigopesa',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'mpesa'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  backgroundImage:
+                                      AssetImage('assets/images/mpesa.png'),
+                                ),
+                                Radio(
+                                  value: 'mpesa',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'airtelmoney'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                      'assets/images/airtellmoney.jpeg'),
+                                  backgroundColor: Colors.grey,
+                                ),
+                                Radio(
+                                  value: 'airtelmoney',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'tigopesa'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage('assets/images/tigopesa.png'),
+                                  backgroundColor: Colors.grey,
+                                ),
+                                Radio(
+                                  value: 'tigopesa',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
                           ],
                         ),
                       )
@@ -238,20 +321,28 @@ class _BookingPageState extends State<BookingPage> {
 
             // Cancellation policy
 
-            const Card(
+            Card(
               child: ListTile(
-                title: Text("Cancellation Policy"),
+                title: const Text("Cancellation Policy"),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      title: Text(
-                          "Free cancellation until 5:00 PM on 1st April",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(
-                          "Cancel before Jul 23 for a partial refund. After that, this reservation is non-refundable. Learn more"),
-                      contentPadding: EdgeInsets.zero,
-                    ),
+                    widget.property?.bORpolicy != null
+                        ? ListTile(
+                            title: Text(widget.property?.bORpolicy?.title ?? "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle:
+                                Text(widget.property?.bORpolicy?.policy ?? ""),
+                            contentPadding: EdgeInsets.zero,
+                          )
+                        : const Text(
+                            "No policy found",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -260,32 +351,34 @@ class _BookingPageState extends State<BookingPage> {
             // Ground rules
             const Card(
               child: ListTile(
-                  title: Text(
-                    "Ground rules",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(
-                            "We ask every guest to remember a few simple things about what makes a great guest. Please review the host's rules before you book.",
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        ListTile(
-                          title: Text(
-                            ". Follow the house rulesTreat your Host’s home like your own",
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        ListTile(
-                          title: Text(
-                            ". Treat your Host’s home like your own",
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ])),
+                title: Text(
+                  "Ground rules",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(
+                        "We ask every guest to remember a few simple things about what makes a great guest. Please review the host's rules before you book.",
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Text(
+                        ". Follow the house rulesTreat your Host’s home like your own",
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Text(
+                        ". Treat your Host’s home like your own",
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ],
+                ),
+              ),
             ),
 
             const Card(
@@ -305,9 +398,6 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ),
             ),
-
-            // Button to book
-            // make italic
             const Text('By selecting the button, I agree to the booking terms.',
                 style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
           ]),
@@ -315,9 +405,7 @@ class _BookingPageState extends State<BookingPage> {
       ),
       persistentFooterButtons: [
         ElevatedButton(
-          onPressed: () {
-            // cancel the booking
-          },
+          onPressed: () {},
           child: const Text("Book"),
         ),
       ],

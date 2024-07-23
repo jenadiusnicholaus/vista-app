@@ -17,7 +17,7 @@ class Environment {
       "https://e-shop-api-dev.azurewebsites.net/api/";
   static const String PROD_BASE_URL = "";
   static String LOCAL_DEV_BASE_URL =
-      "http://192.168.124.42:8000/api/$API_VERSION/";
+      "http://192.168.1.181:8000/api/$API_VERSION/";
 
   // authentication
 
@@ -37,6 +37,8 @@ class Environment {
   // user data
   String USER_PROFILE = "user-data/user-profile/";
   String MY_FAVORITE_PROPERTY = "user-data/my-favorite-property/";
+  // http://localhost:8000/api/v1/user-data/my-booking-view-set/?property_id=1
+  String MY_BOOKING_VIEW_SET = "user-data/my-booking-view-set/";
 
   // properties
   String PROPERTIES = "property/property-list/";

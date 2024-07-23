@@ -22,6 +22,8 @@ import 'features/auth/phone_number/repository.dart';
 import 'features/auth/register/bloc/registration_bloc.dart';
 import 'features/auth/register/repository.dart';
 import 'features/auth/user_profile/bloc/user_profile_bloc.dart';
+import 'features/booking_system/bloc/booking_bloc.dart';
+import 'features/booking_system/repository.dart';
 import 'features/location/device_current_location.dart';
 import 'features/my_fav_property/bloc/my_fav_properies_bloc.dart';
 import 'features/my_fav_property/repository.dart';
@@ -100,13 +102,20 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<PropertyReviewsRepository>(
               create: (context) => PropertyReviewsRepository(
                   apiCall: DioApiCall(), environment: Environment.instance)),
+
+          // BookingRepository
+          RepositoryProvider<GuestBookingRepository>(
+              create: (context) => GuestBookingRepository(
+                  apiCall: DioApiCall(), environment: Environment.instance)),
         ],
         child: MultiBlocProvider(
           providers: [
+            // Auth blocs
             BlocProvider<PhoneNumberAuthBloc>(
                 create: (context) => PhoneNumberAuthBloc(
                     phoneNumberRepository:
                         context.read<PhoneNumberRepository>())),
+
             BlocProvider<RegistrationBloc>(
                 create: (context) => RegistrationBloc(
                     registrationRepository:
@@ -131,6 +140,8 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => UserProfileBloc(
                     userProfileRepository:
                         context.read<UserProfileRepository>())),
+
+            // Home page blocs
             BlocProvider<PropertyDetailsBloc>(
                 create: (context) => PropertyDetailsBloc(
                     properDetailsRepository:
@@ -147,6 +158,14 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => PropertyReviewsBloc(
                     propertyReviewsRepository:
                         context.read<PropertyReviewsRepository>())),
+
+            // BookingBloc
+
+            BlocProvider<BookingBloc>(
+              create: (context) => BookingBloc(
+                guestBookingRepository: context.read<GuestBookingRepository>(),
+              ),
+            ),
           ],
           child: ScreenUtilInit(
               designSize: const Size(360, 690),

@@ -13,7 +13,10 @@ class TokensInterceptors extends Interceptor {
   Environment environment = Environment.instance;
   Dio dio = Dio(BaseOptions(baseUrl: Environment.instance.getBaseUrl));
   String? token;
+  String? refreshToken;
   bool isTokenExpired = false;
+  bool isRefreshTokenExpired = false;
+
   TokensInterceptors();
 
   @override
@@ -21,17 +24,24 @@ class TokensInterceptors extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     // Ideally, token should be fetched from a secure storage or state management solution
     token = await getTokenFromStorage();
+    // Check if the token is expired before making a request
+    // If the token is expired, the request should be intercepted and the token should be
+    refreshToken = await getrefreshToken();
+
     if (token != null) {
       isTokenExpired = TokenHandler.isExpired(token);
     }
 
+    if (refreshToken != null) {
+      isRefreshTokenExpired = TokenHandler.isExpired(refreshToken);
+    }
+
     List<String> ignoreSubUrls = ['authentication/'];
-    if (isTokenExpired) {
+    if (refreshToken == null || isRefreshTokenExpired) {
       ignoreSubUrls.add("property/");
     } else {}
 
     Uri uri = options.uri;
-
     // Normalize the base URL if necessary, e.g., removing query parameters or fragments
     String path = uri.path; // Directly use the path component of the URI
 
@@ -94,5 +104,9 @@ class TokensInterceptors extends Interceptor {
 
   Future<String?> getTokenFromStorage() async {
     return await LocalStorage.read(key: "access_token");
+  }
+
+  Future<String?> getrefreshToken() async {
+    return await LocalStorage.read(key: "refresh_token");
   }
 }

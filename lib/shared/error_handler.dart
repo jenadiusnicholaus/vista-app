@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
 
 class ExceptionHandler {
   static handleError(dynamic e) {
@@ -12,11 +11,6 @@ class ExceptionHandler {
       log(e.response.toString());
       log(e.response!.statusCode.toString());
       log("======================xxxx=======================");
-
-      // if (e.response!.statusCode == 401) {
-      //   Get.offAllNamed('/login');
-      // }
-
       if (e.response != null) {
         if (e.response!.data["detail"] != null) {
           errorMessage = e.response!.data['detail'].toString();

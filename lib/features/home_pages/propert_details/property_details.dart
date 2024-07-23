@@ -10,6 +10,7 @@ import '../../../shared/utils/present_money_format.dart';
 import '../../../shared/widgets/error_snack_bar.dart';
 import '../../Buying_system/Buying_page.dart';
 import '../../booking_system/booking_page.dart';
+import '../../renting_system/renting_page.dart';
 import 'bloc/property_details_bloc.dart';
 import 'package:intl/intl.dart';
 import 'models.dart';
@@ -71,19 +72,362 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
       builder: (context, constraints) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
-          height: state.propertyDetailsModel.reviews!.length == 0
-              ? 10
-              : 140.h, // Adjust height as needed
+          height: 120.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: state.propertyDetailsModel.reviews!.length,
+            itemCount: state.propertyDetailsModel.reviews?.length,
             itemBuilder: (context, index) {
               return ReviewCard(
-                  review: state.propertyDetailsModel.reviews![index]);
+                  review: state.propertyDetailsModel.reviews?[index]);
             },
           ),
         );
       },
+    );
+  }
+
+  _buildImagesList(state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 225.0, // Adjust height as needed
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: state.propertyDetailsModel.images!.length,
+            itemBuilder: (context, index) {
+              return Stack(
+                children: [
+                  Image.network(
+                    state.propertyDetailsModel.images![index].image!,
+                    fit: BoxFit.cover,
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Error loading image');
+                    },
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        "${index + 1} / ${state.propertyDetailsModel.images!.length}", // Adjust index to start from 1
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  _buildFacilitiesList(state) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 3.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            title: Text(
+              widget.property.name ?? '',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            subtitle: Column(
+              children: [
+                Text(
+                  widget.property.description ?? '',
+                  style: Theme.of(context).textTheme.titleSmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                (state.propertyDetailsModel.facilities!.isEmpty)
+                    ? SizedBox(
+                        height: 20.h,
+                        width: MediaQuery.of(context).size.width,
+                        child: const Text('No facilities yet.',
+                            style: TextStyle(fontSize: 12, color: Colors.red)),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10.h),
+                          SizedBox(
+                            height: 20.h,
+                            width: MediaQuery.of(context).size.width,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount:
+                                  state.propertyDetailsModel.facilities!.length,
+                              itemBuilder: (context, index) {
+                                return Text(
+                                    " . ${state.propertyDetailsModel.facilities![index].facility}",
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey));
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buldLocation(state) {
+    return Card(
+        margin: EdgeInsets.symmetric(vertical: 3.h),
+        child: ListTile(
+          leading: const Icon(Icons.location_on),
+          title: Text("${widget.property.city}, ${widget.property.country}",
+              style: Theme.of(context).textTheme.titleSmall),
+        ));
+  }
+
+  _buildHostCard(state) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 3.h),
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundImage:
+              NetworkImage(widget.property.host?.user?.userProfilePic ?? ''),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  " Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
+                  style: Theme.of(context).textTheme.titleSmall),
+              Row(
+                children: [
+                  Icon(
+                      widget.property.host!.isVerified!
+                          ? Icons.verified
+                          : Icons.cancel_outlined,
+                      color: widget.property.host!.isVerified!
+                          ? Colors.green
+                          : Colors.red,
+                      size: 30),
+                  Text(
+                      widget.property.host!.isVerified!
+                          ? "Verified"
+                          : "Not Verified",
+                      style: TextStyle(
+                        color: widget.property.host!.isVerified!
+                            ? Colors.green
+                            : Colors.red,
+                      )),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(calculateDurationOnVista(),
+                        style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(width: 10),
+                    Text(".", style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(width: 10),
+                    Text("4.8 Rating",
+                        style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildFacilityCard(state) {
+    return Card(
+        margin: EdgeInsets.symmetric(vertical: 3.h),
+        child: Column(
+          children: [
+            if (state.propertyDetailsModel.facilities!.isEmpty)
+              SizedBox(
+                height: 100.h,
+                width: MediaQuery.of(context).size.width,
+                child: const Center(
+                  child: Text(' No facilities yet.',
+                      style: TextStyle(fontSize: 20, color: Colors.red)),
+                ),
+              )
+            else
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Text("What the property offers",
+                      style: Theme.of(context).textTheme.titleMedium),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: state.propertyDetailsModel.facilities!.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(
+                              Icons.check_circle_outline,
+                              size: 35,
+                            ),
+                            contentPadding:
+                                EdgeInsets.only(left: 6.w, right: 6.w),
+                            title: Text(
+                                state.propertyDetailsModel.facilities![index]
+                                        .facility ??
+                                    '',
+                                style: Theme.of(context).textTheme.titleSmall),
+                            subtitle: Text(
+                                state.propertyDetailsModel.facilities![index]
+                                        .description ??
+                                    '',
+                                style: Theme.of(context).textTheme.caption),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+          ],
+        ));
+  }
+
+  _buildAmeditiesCard(state) {
+    return Card(
+        child: Column(children: [
+      if (state.propertyDetailsModel.amenities!.isEmpty)
+        SizedBox(
+          height: 100.h,
+          width: MediaQuery.of(context).size.width,
+          child: const Center(
+            child: Text(' No amenities yet.',
+                style: TextStyle(fontSize: 20, color: Colors.red)),
+          ),
+        )
+      else
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text("Extra services",
+                style: Theme.of(context).textTheme.titleMedium),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: state.propertyDetailsModel.amenities!.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        state.propertyDetailsModel.amenities![index]
+                                    .isAvailable ??
+                                false
+                            ? Icons.check_circle_outline
+                            : Icons.verified,
+                        size: 35,
+                      ),
+                      contentPadding: EdgeInsets.only(left: 6.w, right: 6.w),
+                      title: Text(
+                          state.propertyDetailsModel.amenities![index].name ??
+                              '',
+                          style: Theme.of(context).textTheme.titleSmall),
+                      subtitle: Text(
+                          state.propertyDetailsModel.amenities![index]
+                                  .description ??
+                              '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.caption),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+    ]));
+  }
+
+  _buildReviewsCard(state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          title: Text(
+            "${state.propertyDetailsModel.reviews!.length} Reviews",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            "Add a review",
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        const Divider(),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: ReviewsForm(propertyId: widget.property.id!),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        buildReviewList(state),
+      ],
     );
   }
 
@@ -134,72 +478,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                                 return const Text('Error loading image');
                               },
                             )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 225.0, // Adjust height as needed
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: state
-                                        .propertyDetailsModel.images!.length,
-                                    itemBuilder: (context, index) {
-                                      return Stack(
-                                        children: [
-                                          Image.network(
-                                            state.propertyDetailsModel
-                                                .images![index].image!,
-                                            fit: BoxFit.cover,
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .height,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            },
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return const Text(
-                                                  'Error loading image');
-                                            },
-                                          ),
-                                          Positioned(
-                                            bottom: 20,
-                                            right: 20,
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black
-                                                    .withOpacity(0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Text(
-                                                "${index + 1} / ${state.propertyDetailsModel.images!.length}", // Adjust index to start from 1
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+                          : _buildImagesList(state),
                     ),
                     leading: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -272,317 +551,40 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.property.name ?? '',
-                                style:
-                                    Theme.of(context).textTheme.headlineLarge,
-                              ),
-                              (state.propertyDetailsModel.facilities!.isEmpty)
-                                  ? SizedBox(
-                                      height: 20.h,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: const Text(' No facilities yet.',
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.red)),
-                                    )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 20.h,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            shrinkWrap: true,
-                                            itemCount: state
-                                                .propertyDetailsModel
-                                                .facilities!
-                                                .length,
-                                            itemBuilder: (context, index) {
-                                              return Text(
-                                                  " . ${state.propertyDetailsModel.facilities![index].facility}" ??
-                                                      '',
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey));
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on),
-                                  Text(
-                                      "${widget.property.city}, ${widget.property.country}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 3),
-                          const Divider(),
-                          const SizedBox(height: 3),
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundImage: NetworkImage(widget
-                                        .property.host?.user?.userProfilePic ??
-                                    ''),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        " Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                            widget.property.host!.isVerified!
-                                                ? Icons.verified
-                                                : Icons.cancel_outlined,
-                                            color: widget
-                                                    .property.host!.isVerified!
-                                                ? Colors.green
-                                                : Colors.red,
-                                            size: 30),
-                                        Text(
-                                            widget.property.host!.isVerified!
-                                                ? "Verified"
-                                                : "Not Verified",
-                                            style: TextStyle(
-                                              color: widget.property.host!
-                                                      .isVerified!
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                            )),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Text(calculateDurationOnVista(),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                          const SizedBox(width: 10),
-                                          Text(".",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                          const SizedBox(width: 10),
-                                          Text("4.8 Rating",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                          const SizedBox(width: 10),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-                          const Divider(),
-                          if (state.propertyDetailsModel.facilities!.isEmpty)
-                            SizedBox(
-                              height: 100.h,
-                              width: MediaQuery.of(context).size.width,
-                              child: const Center(
-                                child: Text(' No facilities yet.',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.red)),
-                              ),
-                            )
-                          else
-                            Column(
+                          _buildFacilitiesList(state),
+                          _buldLocation(state),
+                          _buildHostCard(state),
+                          _buildFacilityCard(state),
+                          _buildAmeditiesCard(state),
+                          _buildReviewsCard(state),
+                          Card(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 10),
-                                Text("Facilities",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: state
-                                      .propertyDetailsModel.facilities!.length,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: const Icon(
-                                            Icons.check_circle_outline,
-                                            size: 35,
-                                          ),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 6.w, right: 6.w),
-                                          title: Text(
-                                              state
-                                                      .propertyDetailsModel
-                                                      .facilities![index]
-                                                      .facility ??
-                                                  '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                          subtitle: Text(
-                                              state
-                                                      .propertyDetailsModel
-                                                      .facilities![index]
-                                                      .description ??
-                                                  '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                ListTile(
+                                  title: Text(
+                                    "Description",
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  subtitle: Text(
+                                    state.propertyDetailsModel.description ??
+                                        '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      wordSpacing: 1.5,
+                                      leadingDistribution:
+                                          TextLeadingDistribution.even,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                          const SizedBox(height: 10),
-                          const Divider(),
-                          if (state.propertyDetailsModel.amenities!.isEmpty)
-                            SizedBox(
-                              height: 100.h,
-                              width: MediaQuery.of(context).size.width,
-                              child: const Center(
-                                child: Text(' No amenities yet.',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.red)),
-                              ),
-                            )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 10),
-                                Text("Amenities",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: state
-                                      .propertyDetailsModel.amenities!.length,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            state
-                                                        .propertyDetailsModel
-                                                        .amenities![index]
-                                                        .isAvailable ??
-                                                    false
-                                                ? Icons.check_circle_outline
-                                                : Icons.verified,
-                                            size: 35,
-                                          ),
-                                          contentPadding: EdgeInsets.only(
-                                              left: 6.w, right: 6.w),
-                                          title: Text(
-                                              state.propertyDetailsModel
-                                                      .amenities![index].name ??
-                                                  '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                          subtitle: Text(
-                                              state
-                                                      .propertyDetailsModel
-                                                      .amenities![index]
-                                                      .description ??
-                                                  '',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          const SizedBox(height: 3),
-                          const Divider(),
-                          const SizedBox(height: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10),
-                              Text(
-                                "Reviews  ",
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 10),
-                              ReviewsForm(
-                                propertyId: widget.property.id!,
-                              ),
-                              const SizedBox(height: 10),
-                              buildReviewList(state)
-                            ],
-                          ),
-                          const Divider(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10),
-                              Text(
-                                "Description",
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                state.propertyDetailsModel.description ?? '',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  wordSpacing: 1.5,
-                                  leadingDistribution:
-                                      TextLeadingDistribution.even,
-                                ),
-                              ),
-                            ],
                           )
                         ],
                       ),
@@ -643,7 +645,11 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       )
                     else if ((widget.property.businessType == "rent"))
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.to(() => RentingPage(
+                                property: widget.property,
+                              ));
+                        },
                         child: const Text('Rent Now'),
                       )
                     else if ((widget.property.businessType == "booking"))
@@ -670,49 +676,61 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
 class ReviewCard extends StatelessWidget {
   final Reviews review;
 
-  const ReviewCard({Key? key, required this.review}) : super(key: key);
+  const ReviewCard({super.key, required this.review});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      margin: EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return SizedBox(
+      width: 300.w,
+      child: Card(
+        elevation: 4.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              review.user!.firstName.toString(),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            RatingBar.builder(
-              initialRating: review.rating!,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 20,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
+            ListTile(
+              leading: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(review.user!.userProfilePic ??
+                    'https://via.placeholder.com/150'),
               ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
-            ),
-            const SizedBox(height: 8),
-            Text(review.comment!,
-                maxLines: 3,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    review.user?.firstName ?? '',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  RatingBar.builder(
+                    initialRating: review.rating!,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemSize: 20,
+                    itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    itemBuilder: (context, _) => const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {
+                      print(rating);
+                    },
+                  ),
+                ],
+              ),
+              subtitle: Text(
+                review.comment!,
                 style: const TextStyle(
-                  fontSize: 16,
-                  wordSpacing: 1.5,
-                  leadingDistribution: TextLeadingDistribution.even,
-                  overflow: TextOverflow.ellipsis,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
                 ),
-                softWrap: true),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
@@ -762,6 +780,11 @@ class _ReviewsFormState extends State<ReviewsForm> {
           key: formKey,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text("Rate the property"),
+            SizedBox(
+              // Adjust the size of the rating bar as needed
+              height: 10.h,
+            ),
             RatingBar.builder(
                 initialRating: 1,
                 minRating: 1,

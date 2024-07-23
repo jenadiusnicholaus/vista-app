@@ -14,6 +14,8 @@ class BuyPropertyPage extends StatefulWidget {
 }
 
 class _BuyPropertyPageState extends State<BuyPropertyPage> {
+  String _selectedPaymentMethod = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +43,13 @@ class _BuyPropertyPageState extends State<BuyPropertyPage> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.property.description),
+                        Text(
+                          widget.property.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         RatingBar.builder(
+                          ignoreGestures: true,
                           initialRating: widget.property.rating,
                           minRating: 1,
                           direction: Axis.horizontal,
@@ -125,48 +132,61 @@ class _BuyPropertyPageState extends State<BuyPropertyPage> {
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Money Transfer'),
+                        title: const Text(' Mobile Money Transfer'),
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                backgroundImage:
-                                    AssetImage('assets/images/mpesa.png'),
-                              ),
-                              Radio(
-                                value: 'mpesa',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundImage: AssetImage(
-                                    'assets/images/airtellmoney.jpeg'),
-                                backgroundColor: Colors.grey,
-                                // child: const Icon(Icons.money),
-                              ),
-                              Radio(
-                                value: 'airtelmoney ',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
-                            Column(children: [
-                              const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/tigopesa.png'),
-                                backgroundColor: Colors.grey,
-                                // child: const Icon(Icons.money),
-                              ),
-                              Radio(
-                                value: 'tigopesa',
-                                groupValue: 'MobileMoney',
-                                onChanged: (value) {},
-                              ),
-                            ]),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'mpesa'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  backgroundImage:
+                                      AssetImage('assets/images/mpesa.png'),
+                                ),
+                                Radio(
+                                  value: 'mpesa',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'airtelmoney'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                      'assets/images/airtellmoney.jpeg'),
+                                  backgroundColor: Colors.grey,
+                                ),
+                                Radio(
+                                  value: 'airtelmoney',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
+                            GestureDetector(
+                              onTap: () => setState(
+                                  () => _selectedPaymentMethod = 'tigopesa'),
+                              child: Column(children: [
+                                const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage('assets/images/tigopesa.png'),
+                                  backgroundColor: Colors.grey,
+                                ),
+                                Radio(
+                                  value: 'tigopesa',
+                                  groupValue: _selectedPaymentMethod,
+                                  onChanged: (value) => setState(
+                                      () => _selectedPaymentMethod = value!),
+                                ),
+                              ]),
+                            ),
                           ],
                         ),
                       ),
