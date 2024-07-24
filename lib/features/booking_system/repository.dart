@@ -78,12 +78,4 @@ class GuestBookingRepository {
       throw response.data;
     }
   }
-
-  Future<dynamic> delete(String id) async {
-    // return dataSource.delete(id);
-  }
-
-  // Future<List<dynamic>> readAll() async {
-  //   // return dataSource.readAll();
-  // }
 }

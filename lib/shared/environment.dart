@@ -37,8 +37,13 @@ class Environment {
   // user data
   String USER_PROFILE = "user-data/user-profile/";
   String MY_FAVORITE_PROPERTY = "user-data/my-favorite-property/";
-  // http://localhost:8000/api/v1/user-data/my-booking-view-set/?property_id=1
   String MY_BOOKING_VIEW_SET = "user-data/my-booking-view-set/";
+  String MY_BOOKING_BANK_PAYMENT_DETAILS =
+      "user-data/my-booking-bank-payment-details/";
+
+  // my-mobile-money-payment-infos/?mobile_money_id=1
+  String MY_MOBILE_MONEY_PAYMENT_INFOS =
+      "user-data/my-mobile-money-payment-infos/";
 
   // properties
   String PROPERTIES = "property/property-list/";
@@ -60,6 +65,4 @@ class Environment {
         return REMOTE_DEV_BASE_URL;
     }
   }
-
-  static String IMAGE_URL = "http://192.168.1.181:8000";
 }

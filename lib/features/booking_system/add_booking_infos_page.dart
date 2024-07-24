@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
@@ -319,6 +318,4 @@ class _AddBookingPageState extends State<AddBookingPage> {
       ),
     );
   }
-
-  // Define _buildScrollSingleDatePickerWithValue here or ensure it's accessible
 }

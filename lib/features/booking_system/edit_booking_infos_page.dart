@@ -297,10 +297,6 @@ class _EditBookingInfosState extends State<EditBookingInfos> {
                           ? formatter
                               .format(_rangeDatePickerValueWithDefaultValue[1]!)
                           : 'null';
-                      log(cIn);
-                      log(cOut);
-                      log(_adultsController.text);
-                      log(_childrenController.text);
 
                       if (!_formKey.currentState!.validate()) {
                         return;

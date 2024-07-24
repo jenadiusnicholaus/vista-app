@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vista/features/auth/email_login/bloc/email_login_bloc.dart';
 import 'package:vista/shared/utils/local_storage.dart';
-
-import '../../../shared/utils/custom_spinkit_loaders.dart';
 import 'bloc/user_profile_bloc.dart';
 
 class ProfilePage extends StatefulWidget {

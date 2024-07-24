@@ -61,6 +61,8 @@ class ExceptionHandler {
         errorMessage = e.message;
       }
     }
+    print(e);
+
     return errorMessage;
   }
 }

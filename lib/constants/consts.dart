@@ -10,3 +10,8 @@ BorderRadius kBorderRadius = BorderRadius.circular(5.5);
 EdgeInsets kPadding = EdgeInsets.all(kSpacing);
 EdgeInsets kHPadding = EdgeInsets.symmetric(horizontal: kSpacing);
 EdgeInsets kVPadding = EdgeInsets.symmetric(vertical: kSpacing);
+
+// enum
+// request content can be  booking, renting, buying
+
+enum RequestContext { booking, renting, buying }

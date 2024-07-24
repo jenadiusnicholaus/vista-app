@@ -9,6 +9,7 @@ import '../../../shared/utils/custom_spinkit_loaders.dart';
 import '../../../shared/utils/present_money_format.dart';
 import '../../../shared/widgets/error_snack_bar.dart';
 import '../../Buying_system/Buying_page.dart';
+import '../../booking_system/bloc/booking_bloc.dart';
 import '../../booking_system/booking_page.dart';
 import '../../renting_system/renting_page.dart';
 import 'bloc/property_details_bloc.dart';
@@ -211,16 +212,17 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
       child: ListTile(
         leading: CircleAvatar(
           radius: 30,
-          backgroundImage:
-              NetworkImage(widget.property.host?.user?.userProfilePic ?? ''),
+          backgroundImage: widget.property.host?.user?.userProfilePic != null
+              ? NetworkImage(widget.property.host?.user?.userProfilePic)
+              : const AssetImage('assets/images/placeholder_for_profile.jpeg')
+                  as ImageProvider,
         ),
         title: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                  " Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
+              Text("Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
                   style: Theme.of(context).textTheme.titleSmall),
               Row(
                 children: [
@@ -252,8 +254,6 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                     const SizedBox(width: 10),
                     Text(".", style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(width: 10),
-                    Text("4.8 Rating",
-                        style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(width: 10),
                   ],
                 ),
@@ -655,6 +655,9 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                     else if ((widget.property.businessType == "booking"))
                       ElevatedButton(
                         onPressed: () {
+                          // BlocProvider.of<BookingBloc>(context)
+                          //     .add(GetMyBooking());
+
                           Get.to(() => BookingPage(
                                 property: widget.property,
                               ));
@@ -690,8 +693,11 @@ class ReviewCard extends StatelessWidget {
             ListTile(
               leading: CircleAvatar(
                 radius: 30,
-                backgroundImage: NetworkImage(review.user!.userProfilePic ??
-                    'https://via.placeholder.com/150'),
+                backgroundImage: review.user!.userProfilePic != null
+                    ? NetworkImage(review.user!.userProfilePic!)
+                    : const AssetImage(
+                            'assets/images/placeholder_for_profile.jpeg')
+                        as ImageProvider,
               ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -716,7 +722,7 @@ class ReviewCard extends StatelessWidget {
                       color: Colors.amber,
                     ),
                     onRatingUpdate: (rating) {
-                      print(rating);
+                      // print(rating);
                     },
                   ),
                 ],

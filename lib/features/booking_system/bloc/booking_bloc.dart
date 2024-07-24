@@ -17,9 +17,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   BookingBloc({required this.guestBookingRepository})
       : super(BookingInitial()) {
-    on<BookingEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<BookingEvent>((event, emit) {});
 
     on<GetMyBooking>((event, emit) async {
       emit(GetBookingLoading());
@@ -28,7 +26,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         emit(GetBookingLoaded(booking));
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
-        log(errorMessage);
 
         emit(GetBookingFailed(errorMessage));
       }
@@ -49,8 +46,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         Get.off(() => BookingPage(
               property: event.property,
             ));
-      } catch (e, s) {
-        print(s);
+      } catch (e) {
         emit(AddBookingFailed());
       }
     });
@@ -59,12 +55,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       emit(UpdateBookingInfosLoading());
       try {
         await guestBookingRepository.updateBookingInfos(
-          bookingId: event.bookingId,
           checkIn: event.checkIn,
           checkOut: event.checkOut,
           adults: event.adults,
           children: event.children,
           totalPrice: event.totalPrice,
+          bookingId: event.bookingId,
         );
         emit(UpdateBookingInfosSuccess());
         Get.off(() => BookingPage(
@@ -72,8 +68,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
             ));
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
-        log(errorMessage);
-
         emit(UpdateBookingInfosFailed(errorMessage));
       }
     });
