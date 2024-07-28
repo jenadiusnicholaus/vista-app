@@ -2,13 +2,12 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 class TokenHandler {
   static bool isExpired(token) {
-    bool isTokenExpired = JwtDecoder.isExpired(token);
-
-    if (token == null && isTokenExpired == true) {
+    if (token == null) {
       return true;
-    } else {
-      return isTokenExpired;
     }
+
+    bool isTokenExpired = JwtDecoder.isExpired(token ?? '');
+    return isTokenExpired;
   }
 
   static getTokenTime(token, String claim) {

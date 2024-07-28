@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vista/constants/custom_form_field.dart';
-import 'package:vista/features/booking_system/bloc/booking_bloc.dart';
-import 'package:vista/features/booking_system/models.dart';
 import 'package:vista/shared/widgets/error_snack_bar.dart';
 
 import '../../../constants/consts.dart';
@@ -11,9 +9,14 @@ import 'bloc/user_profile_bloc.dart';
 
 class UpdateMyBankInfospage extends StatefulWidget {
   final dynamic property;
-  final MyBookingModel booking;
-  const UpdateMyBankInfospage(
-      {super.key, required this.property, required this.booking});
+  final dynamic requestData;
+  final RequestContext requestContext;
+  const UpdateMyBankInfospage({
+    super.key,
+    required this.property,
+    required this.requestData,
+    required this.requestContext,
+  });
 
   @override
   State<UpdateMyBankInfospage> createState() => _UpdateMyBankInfospageState();
@@ -30,10 +33,10 @@ class _UpdateMyBankInfospageState extends State<UpdateMyBankInfospage> {
   @override
   initState() {
     _accountNumberController.text =
-        widget.booking.myPaymentCard?.accountNumber ?? '';
+        widget.requestData.myPaymentCard?.accountNumber ?? '';
     _accountNameController.text =
-        widget.booking?.myPaymentCard?.cardHolderName ?? '';
-    _selectedBankName = widget.booking.myPaymentCard?.bankName ?? 'CRDB';
+        widget.requestData?.myPaymentCard?.cardHolderName ?? '';
+    _selectedBankName = widget.requestData.myPaymentCard?.bankName ?? 'CRDB';
     super.initState();
   }
 
@@ -129,8 +132,9 @@ class _UpdateMyBankInfospageState extends State<UpdateMyBankInfospage> {
                                 accountNumber: _accountNumberController.text,
                                 accountName: _accountNameController.text,
                                 property: widget.property,
-                                requestContext: RequestContext.booking,
-                                cardInfoId: widget.booking.myPaymentCard?.id,
+                                requestContext: widget.requestContext,
+                                cardInfoId:
+                                    widget.requestData.myPaymentCard?.id,
                               ),
                             );
                             // Process data.

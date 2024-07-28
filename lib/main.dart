@@ -12,7 +12,6 @@ import 'package:vista/features/home_pages/propert_details/repository.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/search/search_property.dart';
-import 'package:vista/features/search/searched_result_page.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 import 'features/auth/activate_account/bloc/activate_account_bloc.dart';
 import 'features/auth/confirm_reset_password/repository.dart';
@@ -23,6 +22,7 @@ import 'features/auth/register/bloc/registration_bloc.dart';
 import 'features/auth/register/repository.dart';
 import 'features/auth/user_profile/bloc/user_profile_bloc.dart';
 import 'features/booking_system/bloc/booking_bloc.dart';
+import 'features/booking_system/confirm_booking/bloc/confirm_booking_bloc.dart';
 import 'features/booking_system/repository.dart';
 import 'features/location/device_current_location.dart';
 import 'features/my_fav_property/bloc/my_fav_properies_bloc.dart';
@@ -33,6 +33,9 @@ import 'features/home_pages/home/home.dart';
 import 'features/home_pages/propert_details/bloc/property_details_bloc.dart';
 import 'features/home_pages/propert_details/property_reviews/bloc/property_reviews_bloc.dart';
 import 'features/home_pages/propert_details/property_reviews/repository.dart';
+import 'features/renting_system/bloc/my_renting_bloc.dart';
+import 'features/renting_system/confirm_renting/bloc/confirm_renting_bloc.dart';
+import 'features/renting_system/repository.dart';
 import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
 
@@ -107,6 +110,10 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<GuestBookingRepository>(
               create: (context) => GuestBookingRepository(
                   apiCall: DioApiCall(), environment: Environment.instance)),
+
+          RepositoryProvider<RentingRepository>(
+              create: (context) => RentingRepository(
+                  apiCall: DioApiCall(), environment: Environment.instance)),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -166,6 +173,26 @@ class _MyAppState extends State<MyApp> {
                 guestBookingRepository: context.read<GuestBookingRepository>(),
               ),
             ),
+
+            // confirm Booking
+            BlocProvider<ConfirmBookingBloc>(
+              create: (context) => ConfirmBookingBloc(
+                repository: context.read<GuestBookingRepository>(),
+              ),
+            ),
+
+            // Home page blocs
+            BlocProvider<MyRentingBloc>(
+                create: (context) => MyRentingBloc(
+                      rentingRepository: context.read<RentingRepository>(),
+                    )),
+
+            //  confirm renting
+
+            BlocProvider<ConfirmRentingBloc>(
+                create: (context) => ConfirmRentingBloc(
+                      rentingRepository: context.read<RentingRepository>(),
+                    )),
           ],
           child: ScreenUtilInit(
               designSize: const Size(360, 690),

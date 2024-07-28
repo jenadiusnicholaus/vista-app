@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
+import 'package:vista/shared/token_handler.dart';
 import '../api_call/api.dart';
 import '../environment.dart';
 import '../utils/local_storage.dart';
@@ -15,7 +16,11 @@ class InterceptorRepository {
   Future<void> refreshToken() async {
     var refreshToken = await LocalStorage.read(key: 'refresh_token');
 
-    // bool isTokenExpired = TokenHandler.isExpired(refreshToken);
+    bool isTokenExpired = TokenHandler.isExpired(refreshToken);
+    if (isTokenExpired) {
+      Get.offAll(() => const EmailLogin());
+      throw Exception('Refresh token is expired');
+    }
 
     if (refreshToken == null) {
       Get.offAll(() => const EmailLogin());

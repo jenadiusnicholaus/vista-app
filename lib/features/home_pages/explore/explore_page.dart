@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -18,6 +17,7 @@ import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/utils/present_money_format.dart';
 
 import '../../../constants/responsiveness.dart';
+import '../../booking_system/bloc/booking_bloc.dart';
 import '../../my_fav_property/bloc/my_fav_properies_bloc.dart';
 import '../../../shared/error_handler.dart';
 import '../../../shared/utils/present_image.dart';
@@ -350,6 +350,9 @@ class _PropertyItemsState extends State<PropertyItems> {
               child: GestureDetector(
                 onTap: () {
                   Get.to(() => PropertyDetailsPage(property: widget.property));
+                  BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
+                    propertyId: widget.property.id,
+                  ));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -447,7 +450,7 @@ class _PropertyItemsState extends State<PropertyItems> {
                           Text(
                             widget.property.availabilityStatus!
                                 ? 'Available'
-                                : 'Not Available',
+                                : 'sold out',
                             style: TextStyle(
                               fontSize: 14,
                               color: widget.property.availabilityStatus!

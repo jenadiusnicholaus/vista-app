@@ -3,7 +3,10 @@ part of 'booking_bloc.dart';
 @immutable
 sealed class BookingEvent {}
 
-class GetMyBooking extends BookingEvent {}
+class GetMyBooking extends BookingEvent {
+  final dynamic propertyId;
+  GetMyBooking({required this.propertyId});
+}
 
 class AddBooking extends BookingEvent {
   final dynamic property;

@@ -9,7 +9,9 @@ import 'bloc/user_profile_bloc.dart';
 
 class AddMyMwInfosPage extends StatefulWidget {
   final dynamic property;
-  const AddMyMwInfosPage({super.key, required this.property});
+  final RequestContext requestContext;
+  const AddMyMwInfosPage(
+      {super.key, required this.property, required this.requestContext});
 
   @override
   State<AddMyMwInfosPage> createState() => _AddMyMwInfosPageState();
@@ -94,7 +96,7 @@ class _AddMyMwInfosPageState extends State<AddMyMwInfosPage> {
                                   mobileNetwork: _selectedMobileNetwork!,
                                   mobileNumber: _mobileNumberController.text,
                                   property: widget.property,
-                                  requestContext: RequestContext.booking),
+                                  requestContext: widget.requestContext),
                             );
                           },
                     child: BlocConsumer<UserProfileBloc, UserProfileState>(

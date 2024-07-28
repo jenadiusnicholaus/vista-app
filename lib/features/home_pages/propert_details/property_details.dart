@@ -9,9 +9,9 @@ import '../../../shared/utils/custom_spinkit_loaders.dart';
 import '../../../shared/utils/present_money_format.dart';
 import '../../../shared/widgets/error_snack_bar.dart';
 import '../../Buying_system/Buying_page.dart';
-import '../../booking_system/bloc/booking_bloc.dart';
 import '../../booking_system/booking_page.dart';
 import '../../renting_system/renting_page.dart';
+import '../category/bloc/property_category_bloc.dart';
 import 'bloc/property_details_bloc.dart';
 import 'package:intl/intl.dart';
 import 'models.dart';
@@ -33,6 +33,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
   int idToAdd = 0;
   bool isAddingToFav = false;
   bool isAdded = false;
+  bool isBookingConfirmed = false;
 
   @override
   initState() {
@@ -395,6 +396,9 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
             icon: const Icon(Icons.add),
             onPressed: () {
               showModalBottomSheet(
+                isScrollControlled:
+                    true, // This makes the bottom sheet scrollable
+
                 context: context,
                 builder: (context) {
                   return Padding(
@@ -493,6 +497,8 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
                             Navigator.pop(context);
+                            BlocProvider.of<PropertyCategoryBloc>(context)
+                                .add(GetPropertyCategoryEvent());
                           },
                         ),
                       ),
@@ -630,42 +636,65 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                width: 0.5.sw, // 50% of screen width
-                child: Column(
-                  children: [
-                    if ((widget.property.businessType == "sale"))
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.to(() => BuyPropertyPage(
-                                property: widget.property,
-                              ));
-                        },
-                        child: const Text('Buy Now'),
-                      )
-                    else if ((widget.property.businessType == "rent"))
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.to(() => RentingPage(
-                                property: widget.property,
-                              ));
-                        },
-                        child: const Text('Rent Now'),
-                      )
-                    else if ((widget.property.businessType == "booking"))
-                      ElevatedButton(
-                        onPressed: () {
-                          // BlocProvider.of<BookingBloc>(context)
-                          //     .add(GetMyBooking());
-
-                          Get.to(() => BookingPage(
-                                property: widget.property,
-                              ));
-                        },
-                        child: const Text('Reserve Now'),
-                      )
-                  ],
-                ),
+              BlocBuilder<PropertyDetailsBloc, PropertyDetailsState>(
+                builder: (context, state) {
+                  return SizedBox(
+                    width: 0.5.sw,
+                    child: Column(
+                      children: [
+                        if ((widget.property.businessType == "sale"))
+                          ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => BuyPropertyPage(
+                                    property: widget.property,
+                                  ));
+                            },
+                            child: const Text('Buy Now'),
+                          )
+                        else if ((widget.property.businessType == "rent"))
+                          ElevatedButton(
+                            onPressed: (state is PropertyDetailsLoaded) &&
+                                    (state.propertyDetailsModel
+                                            .availabilityStatus ==
+                                        true)
+                                ? () {
+                                    Get.to(() => RentingPage(
+                                          property: widget.property,
+                                        ));
+                                  }
+                                : null,
+                            child: Text((state is PropertyDetailsLoaded) &&
+                                    (state.propertyDetailsModel
+                                            .availabilityStatus ==
+                                        true)
+                                ? 'Request to Rent'
+                                : "Sold out"),
+                          )
+                        else if ((widget.property.businessType == "booking"))
+                          ElevatedButton(
+                            onPressed: (state is PropertyDetailsLoaded) &&
+                                    (state.propertyDetailsModel
+                                            .availabilityStatus ==
+                                        true)
+                                ? () {
+                                    Get.to(() => BookingPage(
+                                          property: widget.property,
+                                        ));
+                                  }
+                                : null,
+                            child: Text(
+                              (state is PropertyDetailsLoaded) &&
+                                      (state.propertyDetailsModel
+                                              .availabilityStatus ==
+                                          true)
+                                  ? 'Book Now'
+                                  : 'Sold Out',
+                            ),
+                          )
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           )

@@ -9,7 +9,12 @@ import 'bloc/user_profile_bloc.dart';
 
 class MyBankInforsPage extends StatefulWidget {
   final dynamic property;
-  const MyBankInforsPage({super.key, required this.property});
+  final RequestContext requestContext;
+  const MyBankInforsPage({
+    super.key,
+    required this.property,
+    required this.requestContext,
+  });
 
   @override
   State<MyBankInforsPage> createState() => _MyBankInforsPageState();
@@ -114,7 +119,7 @@ class _MyBankInforsPageState extends State<MyBankInforsPage> {
                                 accountNumber: _accountNumberController.text,
                                 accountName: _accountNameController.text,
                                 property: widget.property,
-                                requestContext: RequestContext.booking,
+                                requestContext: widget.requestContext,
                               ),
                             );
                             // Process data.

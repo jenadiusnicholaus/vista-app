@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:vista/constants/consts.dart';
+import 'package:vista/features/auth/user_profile/bloc/user_profile_bloc.dart';
+import 'package:vista/shared/widgets/error_snack_bar.dart';
 
+import '../../shared/widgets/confirm_booking_dialog.dart';
 import '../auth/user_profile/add_my_bank_infos_page.dart';
 import '../auth/user_profile/add_my_mw_infos.dart';
 import '../auth/user_profile/update_my_bank_infos.dart';
 import '../auth/user_profile/update_my_mw_infos.dart';
+import '../home_pages/propert_details/bloc/property_details_bloc.dart';
 import 'add_booking_infos_page.dart';
 import 'bloc/booking_bloc.dart';
+import 'confirm_booking/bloc/confirm_booking_bloc.dart';
 import 'edit_booking_infos_page.dart';
 
 final today = DateUtils.dateOnly(DateTime.now());
@@ -23,12 +31,22 @@ class BookingPage extends StatefulWidget {
 
 class _BookingPageState extends State<BookingPage> {
   String _selectedPaymentMethod = '';
+  String _selectedAcconntNumber = '';
+  int? _bookingId;
+  // bool isBookingConfirmed = false;
+  bool isConfirming = false;
+
   bool isCardSelected = false;
   bool isMobileMoneySelected = false;
+  bool? isAvailable = true;
 
   @override
   initState() {
-    BlocProvider.of<BookingBloc>(context).add(GetMyBooking());
+    BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
+      propertyId: widget.property.id,
+    ));
+    BlocProvider.of<UserProfileBloc>(context).add(GetUserProfileEvent());
+
     super.initState();
   }
 
@@ -38,14 +56,21 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   _updateTeSelectedPaymentMethodOnInitState(GetBookingLoaded state) {
+    setState(() {
+      _bookingId = state.booking.id;
+      isAvailable = state.booking.property?.availabilityStatus;
+      //   isBookingConfirmed = state.booking.myBookingStatus!.confirmed;
+    });
     if (state.booking.myMwPayment!.mobileNumber != '') {
       setState(() {
         isMobileMoneySelected = true;
+        _selectedAcconntNumber = state.booking.myMwPayment?.mobileNumber ?? '';
         _selectedPaymentMethod = state.booking.myMwPayment?.mobileNetwork ?? '';
       });
     } else if (state.booking.myPaymentCard!.accountNumber != null) {
       setState(() {
         isCardSelected = true;
+
         _selectedPaymentMethod = state.booking.myPaymentCard?.bankName ?? '';
       });
     }
@@ -61,7 +86,17 @@ class _BookingPageState extends State<BookingPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Request Booking"),
+          leading: IconButton(
+            onPressed: () {
+              BlocProvider.of<PropertyDetailsBloc>(context).add(
+                  (GetPropertyDetailsEvent(propertyId: widget.property.id!)));
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+          title: const Text(
+            "Request Booking",
+          ),
         ),
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -115,45 +150,47 @@ class _BookingPageState extends State<BookingPage> {
                   title: const Text("Trip Schedule"),
                   subtitle: BlocBuilder<BookingBloc, BookingState>(
                     builder: (context, state) {
-                      if (state is GetBookingLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (state is GetBookingFailed) {
-                        return Text(
-                          state.error,
-                          style: const TextStyle(
-                            color: Colors.red,
+                      // if (state is GetBookingLoading) {
+                      //   return const Center(
+                      //     child: CircularProgressIndicator(),
+                      //   );
+                      // }
+                      // if (state is GetBookingFailed) {
+                      //   return Text(
+                      //     state.error,
+                      //     style: const TextStyle(
+                      //       color: Colors.red,
+                      //     ),
+                      //   );
+                      // }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: const Text("Schedule",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text((state is GetBookingLoaded) &&
+                                    (state.booking.checkIn != null &&
+                                        state.booking.checkOut != null)
+                                ? "${state.booking.checkIn} - ${state.booking.checkOut}"
+                                : " No schedule found"),
+                            contentPadding: EdgeInsets.zero,
                           ),
-                        );
-                      }
+                          ListTile(
+                            title: const Text("Gests",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            contentPadding: EdgeInsets.zero,
+                            subtitle: Text((state is GetBookingLoaded) &&
+                                    (state.booking.adult != null &&
+                                        state.booking.children != null)
+                                ? "${state.booking.adult} Adults, ${state.booking.children} Child"
+                                : "No guest found"),
+                          ),
+                        ],
+                      );
 
-                      if (state is GetBookingLoaded) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: const Text("Schedule",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(
-                                  "${state.booking.checkIn} - ${state.booking.checkOut}"),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            ListTile(
-                              title: const Text("Gests",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              contentPadding: EdgeInsets.zero,
-                              subtitle: Text(
-                                  "${state.booking.adult} Adults, ${state.booking.children} Child"),
-                            ),
-                          ],
-                        );
-                      }
-
-                      return const Text("No booking details found");
+                      // return const Text("No booking details found");
                     },
                   ),
                   trailing: BlocBuilder<BookingBloc, BookingState>(
@@ -228,44 +265,81 @@ class _BookingPageState extends State<BookingPage> {
               ),
 
               // card to show payment details and button to book
-              _buildBankCardPaymentMethod(),
               _buildMobileMoneyPaymentMethod(),
+              _buildBankCardPaymentMethod(),
+
               // required  for trip
               Card(
-                child: ListTile(
-                  title: const Text("Required for Trip"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                          title: const Text("Send Message to Host",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: const Text(
-                              "Share why you're traveling, who's coming with you, and what you love about the space"),
-                          contentPadding: EdgeInsets.zero,
-                          trailing:
-                              // for going to send sms
-                              IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.sms_outlined))),
-                      const ListTile(
-                        title: Text("Profile photo",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        contentPadding: EdgeInsets.zero,
-                        subtitle: Text("Add a clear photo of yourself"),
-                        trailing: Icon(Icons.edit),
-                      ),
+                child: BlocBuilder<UserProfileBloc, UserProfileState>(
+                  builder: (context, state) {
+                    return ListTile(
+                      title: const Text("Required for Trip"),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                              title: const Text("Send Message to Host",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: const Text(
+                                  "Share why you're traveling, who's coming with you, and what you love about the space"),
+                              contentPadding: EdgeInsets.zero,
+                              trailing:
+                                  // for going to send sms
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.sms_outlined))),
+                          ListTile(
+                            title: const Text("Profile photo",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            contentPadding: EdgeInsets.zero,
+                            subtitle: (state is UserProfileLoaded &&
+                                    state.userProfileModel.userProfilePic !=
+                                        null)
+                                ? const Text("profile Picture looks good")
+                                : const Text("Add a clear profile picture"),
+                            trailing: (state is UserProfileLoaded &&
+                                    state.userProfileModel.userProfilePic !=
+                                        null)
+                                ? IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.edit_outlined),
+                                  )
+                                : IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.add_outlined),
+                                  ),
+                          ),
 
-                      // Phone number
-                      const ListTile(
-                        title: Text("Phone Number",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        contentPadding: EdgeInsets.zero,
-                        subtitle: Text("Add or confirm a phone number"),
-                        trailing: Icon(Icons.edit),
+                          // Phone number
+                          ListTile(
+                            title: const Text("Phone Number",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            contentPadding: EdgeInsets.zero,
+                            subtitle: (state is UserProfileLoaded)
+                                ? Row(
+                                    children: [
+                                      Text(state.userProfileModel.phoneNumber
+                                          .toString()),
+                                    ],
+                                  )
+                                : const Text("Add or confirm a phone number"),
+                            trailing: (state is UserProfileLoaded) &&
+                                    (state
+                                        .userProfileModel.phoneNumberVerified!)
+                                ? const Icon(
+                                    Icons.verified,
+                                    color: Colors.red,
+                                  )
+                                : IconButton(
+                                    onPressed: () {},
+                                    icon: const Text("Verify Now"),
+                                  ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
 
@@ -348,9 +422,91 @@ class _BookingPageState extends State<BookingPage> {
           ),
         ),
         persistentFooterButtons: [
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text("Book"),
+          BlocConsumer<ConfirmBookingBloc, ConfirmBookingState>(
+            listener: (context, cState) {
+              if (cState is ConfirmBookingLoading) {
+                setState(() {
+                  isConfirming = true;
+                });
+              }
+              if (cState is ConfirmBookingSuccess) {
+                showMessage(
+                    message: "Booking confirmed",
+                    title: "Success",
+                    isAnError: false);
+                setState(() {
+                  isConfirming = false;
+                });
+                // refresh the booking details
+                BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
+                  propertyId: widget.property.id,
+                ));
+              }
+              if (cState is ConfirmBookingFailure) {
+                showMessage(
+                    message: cState.message, title: "Error", isAnError: true);
+                setState(() {
+                  isConfirming = false;
+                });
+                BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
+                  propertyId: widget.property.id,
+                ));
+              }
+            },
+            builder: (context, cState) {
+              return ElevatedButton(
+                  onPressed: isConfirming || !isAvailable!
+                      ? null
+                      : () {
+                          if (_selectedPaymentMethod == '') {
+                            Get.snackbar(
+                                "Error", "Please select payment method");
+
+                            return;
+                          }
+                          if (_selectedAcconntNumber == '') {
+                            Get.snackbar(
+                                "Error", "Please select account number");
+                            return;
+                          }
+                          if (_bookingId == null) {
+                            Get.snackbar("Error", "No booking found");
+                            return;
+                          }
+
+                          showDialog(
+                            context: context,
+                            builder: (context) => ConfirmDialog(
+                              isMobileMoneySelected: isMobileMoneySelected,
+                              id: _bookingId!,
+                              selectedPaymentMethod: _selectedPaymentMethod,
+                              selectedAcconntNumber: _selectedAcconntNumber,
+                              amount: widget.property.price.toString(),
+                              onPressed: () {
+                                BlocProvider.of<ConfirmBookingBloc>(context)
+                                    .add(ConfirmBooking(
+                                  bookingId: _bookingId,
+                                  paymentMethod: _selectedPaymentMethod,
+                                  accountNumber: _selectedAcconntNumber,
+                                  amount: widget.property.price.toString(),
+                                ));
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          );
+                        },
+                  child: isConfirming
+                      ? const SpinKitCircle(
+                          color: Colors.white,
+                          size: 20,
+                        )
+                      : !isAvailable!
+                          ? const Text(
+                              "sold out",
+                              style: const TextStyle(color: Colors.white),
+                            )
+                          : const Text("Confirm Booking"));
+            },
           ),
         ],
       ),
@@ -386,58 +542,54 @@ class _BookingPageState extends State<BookingPage> {
               contentPadding: EdgeInsets.zero,
               title: BlocBuilder<BookingBloc, BookingState>(
                 builder: (context, state) {
-                  if (state is GetBookingLoaded) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              state.booking.myMwPayment!.mobileNetwork != ""
-                                  ? state.booking.myMwPayment!.mobileNetwork!
-                                  : "No mobile network found",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              state.booking.myMwPayment!.mobileNumber != ""
-                                  ? state.booking.myMwPayment!.mobileNumber!
-                                  : "No phone number found",
-                            ),
-                          ],
-                        ),
-                        state.booking.myMwPayment!.mobileNumber != ""
-                            ? IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  Get.off(() => UpdateMyMwInfosPage(
-                                        property: widget.property,
-                                        booking: state.booking,
-                                      ));
-                                },
-                              )
-                            : IconButton(
-                                onPressed: () {
-                                  Get.off(() => AddMyMwInfosPage(
-                                      property: widget.property));
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                      ],
-                    );
-                  }
-                  if (state is GetBookingFailed) {
-                    return Text(
-                      state.error,
-                      style: const TextStyle(
-                        color: Colors.red,
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            (state is GetBookingLoaded) &&
+                                    state.booking.myMwPayment!.mobileNetwork !=
+                                        ""
+                                ? state.booking.myMwPayment!.mobileNetwork!
+                                : "No mobile network found",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            (state is GetBookingLoaded) &&
+                                    state.booking.myMwPayment!.mobileNumber !=
+                                        ""
+                                ? state.booking.myMwPayment!.mobileNumber!
+                                : "",
+                          )
+                        ],
                       ),
-                    );
-                  }
-
-                  return const Text('');
+                      (state is GetBookingLoaded)
+                          ? state.booking.myMwPayment!.mobileNumber != ""
+                              ? IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    Get.off(() => UpdateMyMwInfosPage(
+                                          property: widget.property,
+                                          requestData: state.booking,
+                                          requestContext:
+                                              RequestContext.booking,
+                                        ));
+                                  },
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    Get.off(() => AddMyMwInfosPage(
+                                        requestContext: RequestContext.booking,
+                                        property: widget.property));
+                                  },
+                                  icon: const Icon(Icons.add),
+                                )
+                          : const Text(''),
+                    ],
+                  );
                 },
               ),
               subtitle: Row(
@@ -524,127 +676,133 @@ class _BookingPageState extends State<BookingPage> {
   _buildBankCardPaymentMethod() {
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
-        if (state is GetBookingLoading) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                ),
-              ],
-            ),
-          );
-        }
-        if (state is GetBookingFailed) {
-          return Text(
-            state.error,
-            style: const TextStyle(
-              color: Colors.red,
-            ),
-          );
-        }
-        if (state is GetBookingLoaded) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isCardSelected = !isCardSelected;
-                      isMobileMoneySelected = false;
-                      _selectedPaymentMethod =
-                          state.booking.myPaymentCard!.bankName!;
-                    });
-                  },
-                  child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: isCardSelected ? Colors.green : Colors.grey,
-                          width: 2,
-                        ),
-                      ),
-                      child: ListTile(
-                        selected: isCardSelected,
-                        leadingAndTrailingTextStyle: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        title: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Bank Payment Method",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Icon(Icons.credit_card),
-                          ],
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: const Text("Card Holder Name",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(
-                                state.booking.myPaymentCard!.cardHolderName !=
-                                        ""
-                                    ? state
-                                        .booking.myPaymentCard!.cardHolderName!
-                                    : "No card holder name found",
-                              ),
+        // if (state is GetBookingLoading) {
+        //   return SizedBox(
+        //     width: MediaQuery.of(context).size.width,
+        //     child: const Column(
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: [
+        //         Padding(
+        //           padding: EdgeInsets.all(8.0),
+        //           child: CircularProgressIndicator(),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // }
 
-                              // trailing: Icon(Icons.edit),
-                              contentPadding: EdgeInsets.zero,
+        // if (state is GetBookingLoaded) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isCardSelected = !isCardSelected;
+                    isMobileMoneySelected = false;
+                    _selectedPaymentMethod = (state is GetBookingLoaded)
+                        ? state.booking.myPaymentCard!.bankName!
+                        : '';
+                  });
+                },
+                child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: isCardSelected ? Colors.green : Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                    child: ListTile(
+                      selected: isCardSelected,
+                      leadingAndTrailingTextStyle: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      title: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Bank Payment Method",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                            ListTile(
-                              title: const Text("Card Number",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              contentPadding: EdgeInsets.zero,
-                              subtitle: Text(state.booking.myPaymentCard!
-                                          .accountNumber !=
-                                      null
-                                  ? "**** **** **** ${state.booking.myPaymentCard?.accountNumber?.substring(12)}"
-                                  : "No card number found"),
-                              trailing:
-                                  state.booking.myPaymentCard!.accountNumber !=
-                                          null
-                                      ? IconButton(
-                                          icon: const Icon(Icons.edit),
-                                          onPressed: () {
-                                            Get.to(() => UpdateMyBankInfospage(
-                                                  property: widget.property,
-                                                  booking: state.booking,
-                                                ));
-                                          },
-                                        )
-                                      : IconButton(
-                                          onPressed: () {
-                                            Get.to(() => MyBankInforsPage(
-                                                property: widget.property));
-                                          },
-                                          icon: const Icon(Icons.add)),
-                            ),
-                          ],
-                        ),
-                      )),
-                ),
-              ],
-            ),
-          );
-        }
-        return const Text("No booking details found");
+                          ),
+                          Icon(Icons.credit_card),
+                        ],
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: const Text("Card Holder Name",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: (state is GetBookingLoaded)
+                                ? Text(
+                                    state.booking.myPaymentCard!
+                                                .cardHolderName !=
+                                            ""
+                                        ? state.booking.myPaymentCard!
+                                            .cardHolderName!
+                                        : "No card holder name found",
+                                  )
+                                : const Text("No card holder name found"),
+
+                            // trailing: Icon(Icons.edit),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          ListTile(
+                            title: const Text("Card Number",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            contentPadding: EdgeInsets.zero,
+                            subtitle: (state is GetBookingLoaded)
+                                ? Text(state.booking.myPaymentCard
+                                                ?.accountNumber !=
+                                            null &&
+                                        state.booking.myPaymentCard!
+                                                .accountNumber!.length >=
+                                            3
+                                    ? "**** **** **** ${state.booking.myPaymentCard!.accountNumber!.substring(state.booking.myPaymentCard!.accountNumber!.length - 3)}"
+                                    : "No card number found")
+                                : const Text("No card number found"),
+                            trailing: (state is GetBookingLoaded) &&
+                                    state.booking.myPaymentCard!
+                                            .accountNumber !=
+                                        ''
+                                ? IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      Get.to(() => UpdateMyBankInfospage(
+                                            property: widget.property,
+                                            requestContext:
+                                                RequestContext.booking,
+                                            requestData: state.booking,
+                                          ));
+                                    },
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      Get.to(() => MyBankInforsPage(
+                                          requestContext:
+                                              RequestContext.booking,
+                                          property: widget.property));
+                                    },
+                                    icon: const Icon(Icons.add),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        );
+        // }
+        // return const Text("No booking details found");
       },
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vista/constants/consts.dart';
-import 'package:vista/features/booking_system/models.dart';
 import 'package:vista/shared/widgets/error_snack_bar.dart';
 
 import '../../../constants/custom_form_field.dart';
@@ -10,9 +9,13 @@ import 'bloc/user_profile_bloc.dart';
 
 class UpdateMyMwInfosPage extends StatefulWidget {
   final dynamic property;
-  final MyBookingModel booking;
+  final dynamic requestData;
+  final RequestContext requestContext;
   const UpdateMyMwInfosPage(
-      {super.key, required this.property, required this.booking});
+      {super.key,
+      required this.property,
+      required this.requestData,
+      required this.requestContext});
 
   @override
   State<UpdateMyMwInfosPage> createState() => _UpdateMyMwInfosPageState();
@@ -27,9 +30,9 @@ class _UpdateMyMwInfosPageState extends State<UpdateMyMwInfosPage> {
   @override
   initState() {
     _mobileNumberController.text =
-        widget.booking.myMwPayment?.mobileNumber ?? '';
+        widget.requestData.myMwPayment?.mobileNumber ?? '';
     _selectedMobileNetwork =
-        widget.booking.myMwPayment?.mobileNetwork ?? 'Mpesa';
+        widget.requestData.myMwPayment?.mobileNetwork ?? 'Mpesa';
     super.initState();
   }
 
@@ -106,8 +109,8 @@ class _UpdateMyMwInfosPageState extends State<UpdateMyMwInfosPage> {
                                 mobileNetwork: _selectedMobileNetwork!,
                                 mobileNumber: _mobileNumberController.text,
                                 property: widget.property,
-                                requestContext: RequestContext.booking,
-                                mobileMoneyId: widget.booking.myMwPayment?.id,
+                                requestContext: widget.requestContext,
+                                mobileMoneyId: widget.requestData.myMwPayment?.id,
                               ),
                             );
                           },

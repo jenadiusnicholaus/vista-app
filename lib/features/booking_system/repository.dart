@@ -14,9 +14,9 @@ class GuestBookingRepository {
     // return dataSource.create(booking);
   }
 
-  Future<MyBookingModel> getMyBooking() async {
-    var response = await apiCall
-        .get(environment.getBaseUrl + environment.MY_BOOKING_VIEW_SET);
+  Future<MyBookingModel> getMyBooking({required dynamic propertyId}) async {
+    var response = await apiCall.get(
+        '${environment.getBaseUrl}${environment.MY_BOOKING_VIEW_SET}?property_id=$propertyId');
 
     if (response.statusCode == 200) {
       MyBookingModel myBookingModel = MyBookingModel.fromJson(response.data);
@@ -73,6 +73,27 @@ class GuestBookingRepository {
         data);
 
     if (response.statusCode == 200) {
+      return response.data;
+    } else {
+      throw response.data;
+    }
+  }
+
+  Future<dynamic> confirmBooking(
+      {required dynamic bookingId,
+      required dynamic paymentMethod,
+      required dynamic accountNumber,
+      required dynamic amount}) async {
+    var data = {
+      "payment_method": paymentMethod,
+      "accountNumber": accountNumber,
+      "amount": amount
+    };
+    var response = await apiCall.post(
+        "${environment.getBaseUrl}${environment.CONFIRM_BOOKING}?booking_id=$bookingId",
+        data: data);
+
+    if (response.statusCode == 201) {
       return response.data;
     } else {
       throw response.data;

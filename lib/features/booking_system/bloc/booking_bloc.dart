@@ -22,7 +22,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<GetMyBooking>((event, emit) async {
       emit(GetBookingLoading());
       try {
-        MyBookingModel booking = await guestBookingRepository.getMyBooking();
+        MyBookingModel booking = await guestBookingRepository.getMyBooking(
+          propertyId: event.propertyId,
+        );
         emit(GetBookingLoaded(booking));
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);

@@ -1,3 +1,5 @@
+import '../../shared/models.dart';
+
 class MyBookingModel {
   int? id;
   dynamic checkIn;
@@ -9,6 +11,8 @@ class MyBookingModel {
   MyAddress? myAddress;
   MyPaymentCard? myPaymentCard;
   MyMwPayment? myMwPayment;
+  MyBookingStatus? myBookingStatus;
+  Property? property;
 
   MyBookingModel(
       {this.id,
@@ -20,7 +24,9 @@ class MyBookingModel {
       this.children,
       this.myAddress,
       this.myPaymentCard,
-      this.myMwPayment});
+      this.myMwPayment,
+      this.myBookingStatus,
+      this.property});
 
   MyBookingModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -31,18 +37,25 @@ class MyBookingModel {
     adult = json['adult'];
     children = json['children'];
     myAddress = json['my_address'] != null
-        ? new MyAddress.fromJson(json['my_address'])
+        ? MyAddress.fromJson(json['my_address'])
         : null;
     myPaymentCard = json['my_payment_card'] != null
-        ? new MyPaymentCard.fromJson(json['my_payment_card'])
+        ? MyPaymentCard.fromJson(json['my_payment_card'])
         : null;
     myMwPayment = json['my_mw_payment'] != null
-        ? new MyMwPayment.fromJson(json['my_mw_payment'])
+        ? MyMwPayment.fromJson(json['my_mw_payment'])
         : null;
+
+    myBookingStatus = json['my_booking_status'] != null
+        ? MyBookingStatus.fromJson(json['my_booking_status'])
+        : null;
+
+    property =
+        json['property'] != null ? Property.fromJson(json['property']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['check_in'] = checkIn;
     data['check_out'] = checkOut;
@@ -58,6 +71,14 @@ class MyBookingModel {
     }
     if (myMwPayment != null) {
       data['my_mw_payment'] = myMwPayment!.toJson();
+    }
+
+    if (myBookingStatus != null) {
+      data['my_booking_status'] = myBookingStatus!.toJson();
+    }
+
+    if (property != null) {
+      data['property'] = property!.toJson();
     }
     return data;
   }
@@ -101,7 +122,7 @@ class MyAddress {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['address'] = address;
     data['city'] = city;
@@ -151,7 +172,7 @@ class MyPaymentCard {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['account_number'] = accountNumber;
     data['bank_name'] = bankName;
@@ -194,7 +215,7 @@ class MyMwPayment {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['mobile_number'] = mobileNumber;
     data['mobile_holder_name'] = mobileHolderName;
@@ -202,6 +223,63 @@ class MyMwPayment {
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['user'] = user;
+    return data;
+  }
+}
+
+class MyBookingStatus {
+  dynamic id;
+  dynamic user;
+  dynamic booking;
+  dynamic confirmed;
+  dynamic completed;
+  dynamic canceled;
+  dynamic confirmedAt;
+  dynamic completedAt;
+  dynamic canceledAt;
+  dynamic createdAt;
+  dynamic updatedAt;
+
+  MyBookingStatus(
+      {this.id,
+      this.user,
+      this.booking,
+      this.confirmed,
+      this.completed,
+      this.canceled,
+      this.confirmedAt,
+      this.completedAt,
+      this.canceledAt,
+      this.createdAt,
+      this.updatedAt});
+
+  MyBookingStatus.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    user = json['user'];
+    booking = json['booking'];
+    confirmed = json['confirmed'];
+    completed = json['completed'];
+    canceled = json['canceled'];
+    confirmedAt = json['confirmed_at'];
+    completedAt = json['completed_at'];
+    canceledAt = json['canceled_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user'] = user;
+    data['booking'] = booking;
+    data['confirmed'] = confirmed;
+    data['completed'] = completed;
+    data['canceled'] = canceled;
+    data['confirmed_at'] = confirmedAt;
+    data['completed_at'] = completedAt;
+    data['canceled_at'] = canceledAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

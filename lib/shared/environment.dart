@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 enum EnvironmentType { prod, staging, local_dev, remote_dev }
 
@@ -6,11 +6,7 @@ class Environment {
   static final Environment _instance = Environment._init();
   static Environment get instance => _instance;
   Environment._init();
-
   static String API_VERSION = "v1";
-
-  // https://travel-monkey-app-backend-staging.azurewebsites.net/api/user-auth/v1/user-registration/
-
   static const String STAGING_BASE_URL = "";
 
   static const String REMOTE_DEV_BASE_URL =
@@ -20,7 +16,6 @@ class Environment {
       "http://192.168.1.181:8000/api/$API_VERSION/";
 
   // authentication
-
   String REFRESH_TOKEN = "authentication/token/refresh/";
   String PHONE_NUMBER_AUTH = "authentication/phone-number-auth/";
   String VERIFY_PHONE_NUMBER =
@@ -40,17 +35,17 @@ class Environment {
   String MY_BOOKING_VIEW_SET = "user-data/my-booking-view-set/";
   String MY_BOOKING_BANK_PAYMENT_DETAILS =
       "user-data/my-booking-bank-payment-details/";
-
-  // my-mobile-money-payment-infos/?mobile_money_id=1
   String MY_MOBILE_MONEY_PAYMENT_INFOS =
       "user-data/my-mobile-money-payment-infos/";
+  String CONFIRM_BOOKING = "user-data/confirm-booking/";
+  String CONFIRM_RENTING = "user-data/confirm-renting-mwm/";
+  String MY_RENTING = "user-data/my-renting/";
 
   // properties
   String PROPERTIES = "property/property-list/";
   String PROPERTY_DETAIL = "property/property-details/";
   String PROPERTY_CATEGORIES = "property/categories/";
   String PROPERTY_REVIEW = "property/review-property/";
-
   static EnvironmentType environmentType = EnvironmentType.local_dev;
 
   String get getBaseUrl {

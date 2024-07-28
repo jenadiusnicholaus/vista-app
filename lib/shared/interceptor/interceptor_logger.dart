@@ -41,18 +41,13 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     log('Error in ${err.requestOptions.method} ${err.requestOptions.uri}: ${err.message}');
     log('Error response: ${err.response}');
     log('Error response data: ${err.response?.data}');
     log('Error response headers: ${err.response?.headers}');
     log('Error response status code: ${err.response?.statusCode}');
     log('Error response status message: ${err.response?.statusMessage}');
-
-    // Optionally log error details, response, etc.
-    if (err.response!.statusCode != 401) {
-      ExceptionHandler.handleError(err);
-    }
     super.onError(err, handler);
   }
 }

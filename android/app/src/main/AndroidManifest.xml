@@ -7,7 +7,7 @@
 
     <application
         android:label="vista"
-        android:name="${applicationName}"
+        android:name="androidx.multidex.MultiDexApplication"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
