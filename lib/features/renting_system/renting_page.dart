@@ -16,7 +16,6 @@ import '../auth/user_profile/add_my_bank_infos_page.dart';
 import '../auth/user_profile/add_my_mw_infos.dart';
 import '../auth/user_profile/update_my_bank_infos.dart';
 import '../auth/user_profile/update_my_mw_infos.dart';
-import '../booking_system/booking_page.dart';
 import '../home_pages/explore/models.dart';
 import '../home_pages/propert_details/bloc/property_details_bloc.dart';
 import 'add_my_renting_page.dart';

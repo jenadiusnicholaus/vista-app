@@ -10,7 +10,7 @@ import 'package:vista/features/home_pages/inbox.dart';
 import '../../auth/user_profile/user_profile_page.dart';
 import '../../location/device_current_location.dart';
 import '../category/bloc/property_category_bloc.dart';
-import '../trips.dart';
+import '../requests.dart';
 import '../wishlist_page.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> widgetOptions = <Widget>[
       ExplorePage(categories: ct),
       const WishlistsPage(),
-      const TripPage(),
+      const MyRequests(),
       const InboxPage(),
       const ProfilePage(),
     ];
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.airplane_ticket_outlined),
-              label: 'Trips',
+              label: 'Requests',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.mail_outline),

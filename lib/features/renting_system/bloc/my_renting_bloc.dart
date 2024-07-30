@@ -74,7 +74,7 @@ class MyRentingBloc extends Bloc<MyRentingEvent, MyRentingState> {
             rentingId: event.rentingId);
         emit(AddMyRentingSuccess(message: response["message"]));
         getTheRequestContext(event);
-      } catch (e, s) {
+      } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
         emit(AddMyRentingFailure(
           errorMessage: errorMessage,

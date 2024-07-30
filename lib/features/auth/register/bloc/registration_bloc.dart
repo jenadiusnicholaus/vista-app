@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:vista/features/auth/register/models.dart';
 import 'package:vista/features/auth/activate_account/verify_email.dart';
-import 'package:vista/shared/error_handler.dart';
 
 import '../repository.dart';
 
@@ -40,7 +37,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
         );
         emit(RegistrationSuccess(registrationModel: registrationModel));
         Get.to(() => const VerifyEmailPage());
-      } catch (e, s) {
+      } catch (e) {
         if (e is DioException) {
           ValidationErrorModel errorModel =
               ValidationErrorModel.fromJson(e.response!.data);

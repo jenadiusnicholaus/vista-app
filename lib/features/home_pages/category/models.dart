@@ -1,7 +1,7 @@
 class PropertyCategoriesModel {
   int? count;
   String? next;
-  Null? previous;
+  dynamic previous;
   List<CResults>? results;
 
   PropertyCategoriesModel({this.count, this.next, this.previous, this.results});
@@ -33,7 +33,7 @@ class PropertyCategoriesModel {
 class CResults {
   int? id;
   String? name;
-  Null? icon;
+  dynamic icon;
   String? description;
   String? createdAt;
   bool? published;

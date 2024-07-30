@@ -136,7 +136,7 @@ class PropertyDetailsModel {
 class Category {
   int? id;
   String? name;
-  Null? icon;
+  dynamic icon;
   String? description;
   String? createdAt;
   String? updatedAt;

@@ -853,6 +853,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  xmpp_plugin:
+    dependency: "direct main"
+    description:
+      name: xmpp_plugin
+      sha256: "13bfe8e520e7c2e4f0e018d6b5d45d2e55e7fbbf207bcbe3a89b138e75d26fdf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.12"
   yaml:
     dependency: transitive
     description:

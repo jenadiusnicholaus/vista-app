@@ -1,7 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
-import 'package:vista/data/sample_data.dart';
 
 import '../../../../shared/error_handler.dart';
 import '../../repository.dart';

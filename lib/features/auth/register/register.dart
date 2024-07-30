@@ -209,6 +209,7 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                                   return errorModel!.message!.phoneNumber![0];
                                 }
                               }
+                              return null;
                             },
                             onChanged: (phone) {
                               setState(() {

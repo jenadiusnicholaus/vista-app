@@ -21,6 +21,8 @@ import 'features/auth/phone_number/repository.dart';
 import 'features/auth/register/bloc/registration_bloc.dart';
 import 'features/auth/register/repository.dart';
 import 'features/auth/user_profile/bloc/user_profile_bloc.dart';
+import 'features/booking_system/all_booking_requests/bloc/my_booking_request_bloc.dart';
+import 'features/booking_system/all_booking_requests/repository.dart';
 import 'features/booking_system/bloc/booking_bloc.dart';
 import 'features/booking_system/confirm_booking/bloc/confirm_booking_bloc.dart';
 import 'features/booking_system/repository.dart';
@@ -193,6 +195,12 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => ConfirmRentingBloc(
                       rentingRepository: context.read<RentingRepository>(),
                     )),
+
+            BlocProvider<MyBookingRequestBloc>(
+              create: (context) => MyBookingRequestBloc(
+                repository: context.read<GuestBookingRequestsRepository>(),
+              ),
+            ),
           ],
           child: ScreenUtilInit(
               designSize: const Size(360, 690),

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:vista/shared/error_handler.dart';
 
 class LoggingInterceptor extends Interceptor {
   @override

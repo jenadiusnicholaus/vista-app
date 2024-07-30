@@ -10,7 +10,6 @@ import '../../shared/api_call/api.dart';
 import '../../shared/environment.dart';
 import '../../shared/error_handler.dart';
 import '../../shared/utils/present_money_format.dart';
-import 'explore/explore_page.dart';
 import 'propert_details/property_details.dart';
 
 class WishlistsPage extends StatefulWidget {
@@ -25,8 +24,6 @@ class _WishlistsPageState extends State<WishlistsPage> {
 
   final PagingController<int, Results> _pagingController =
       PagingController(firstPageKey: 1);
-
-  String? _searchTerm;
 
   @override
   void initState() {
@@ -69,17 +66,7 @@ class _WishlistsPageState extends State<WishlistsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wishlists'),
-        actions: [
-          // IconButton(
-          //   onPressed: () {
-          //     showSearch(
-          //       context: context,
-          //       delegate: SearchBarDelegate(),
-          //     );
-          //   },
-          //   icon: Icon(Icons.search),
-          // ),
-        ],
+        actions: [],
       ),
       body: SafeArea(
         child: Container(
@@ -87,10 +74,10 @@ class _WishlistsPageState extends State<WishlistsPage> {
             horizontal:
                 ResponsiveLayout.isLargeScreen(context) ? 0.05.sw : 0.02.sw,
           ),
-          child: Column(
+          child: Row(
             children: [
               SizedBox(
-                height: 0.02.sh,
+                width: 0.02.sw, // Adjust the width as needed
               ),
               Expanded(
                 child: RefreshIndicator(

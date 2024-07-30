@@ -59,6 +59,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   url_launcher: ^6.3.0
   calendar_date_picker2: ^1.1.5
+  xmpp_plugin: ^2.2.12
   flutter_pdfview: ^1.3.2
   # device_info_plus: ^10.1.0
   # syncfusion_flutter_datepicker: ^26.1.41

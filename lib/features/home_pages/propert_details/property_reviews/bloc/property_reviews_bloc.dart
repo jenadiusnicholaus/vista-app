@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../../shared/error_handler.dart';
 import '../repository.dart';
 
 part 'property_reviews_event.dart';

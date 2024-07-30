@@ -58,7 +58,7 @@ class _ExplorePageState extends State<ExplorePage>
     });
     selectedCategory = widget.categories[0].id.toString();
     _tabController =
-        TabController(length: widget.categories!.length, vsync: this);
+        TabController(length: widget.categories.length, vsync: this);
 
     _propertiesPagingController.addStatusListener((status) {
       if (status == PagingStatus.subsequentPageError) {

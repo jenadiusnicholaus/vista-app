@@ -40,6 +40,10 @@ class Environment {
   String CONFIRM_BOOKING = "user-data/confirm-booking/";
   String CONFIRM_RENTING = "user-data/confirm-renting-mwm/";
   String MY_RENTING = "user-data/my-renting/";
+  String MY_RENTING_REQUEST = "user-data/my-renting-request/";
+  String MY_BOOKING_REQUEST = "user-data/my-booking-request/";
+  // http://localhost:8000/api/v1/user-data/my-renting-request/
+
 
   // properties
   String PROPERTIES = "property/property-list/";

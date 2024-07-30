@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
@@ -20,7 +17,6 @@ class ActivateAccountBloc
     required this.activateAccountRepository,
   }) : super(ActivateAccountInitial()) {
     on<ActivateAccountEvent>((event, emit) {
-      // TODO: implement event handler
     });
 
     on<VerifyEmailEvent>((event, emit) async {
@@ -49,7 +45,6 @@ class ActivateAccountBloc
       }
     });
 
-    //  resend code event
     on<ResendCodeEvent>((event, emit) async {
       // Delay
       emit(ActivateAccountLoading());
