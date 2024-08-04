@@ -5,6 +5,7 @@ import 'package:vista/features/auth/user_profile/repository.dart';
 
 import '../../../../constants/consts.dart';
 import '../../../../shared/error_handler.dart';
+import '../../../../shared/utils/local_storage.dart';
 import '../../../../shared/utils/request_context.dart';
 
 part 'user_profile_event.dart';
@@ -20,6 +21,9 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
         UserProfileModel userProfileModel =
             await userProfileRepository.getUserProfile();
         emit(UserProfileLoaded(userProfileModel));
+        await LocalStorage.write(
+            key: 'phone_number',
+            value: userProfileModel.phoneNumber.toString());
       } catch (e) {
         emit(UserProfileError("Error fetching user profile"));
       }

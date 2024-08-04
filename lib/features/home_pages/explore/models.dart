@@ -1,3 +1,5 @@
+import 'package:vista/features/fcm/model.dart';
+
 class PropertListModel {
   int? count;
   dynamic next;
@@ -91,9 +93,8 @@ class Results {
   Results.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    category = json['category'] != null
-        ? Category.fromJson(json['category'])
-        : null;
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
     price = json['price'];
     currency = json['currency'];
     period = json['period'];
@@ -223,6 +224,7 @@ class Host {
   bool? isVerified;
   String? createdAt;
   String? updatedAt;
+  FcmTokenModel? fcmtoken;
 
   Host(
       {this.id,
@@ -230,11 +232,15 @@ class Host {
       this.propertyCount,
       this.isVerified,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.fcmtoken});
 
   Host.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
+    fcmtoken = json['fcmtoken'] != null
+        ? FcmTokenModel.fromJson(json['fcmtoken'])
+        : null;
     propertyCount = json['property_count'];
     isVerified = json['is_verified'];
     createdAt = json['created_at'];
@@ -246,6 +252,10 @@ class Host {
     data['id'] = id;
     if (user != null) {
       data['user'] = user!.toJson();
+    }
+
+    if (fcmtoken != null) {
+      data['fcmtoken'] = fcmtoken!.toJson();
     }
     data['property_count'] = propertyCount;
     data['is_verified'] = isVerified;

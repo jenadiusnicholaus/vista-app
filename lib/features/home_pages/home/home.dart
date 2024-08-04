@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vista/features/home_pages/explore/explore_page.dart';
-import 'package:vista/features/home_pages/inbox.dart';
-
+import 'package:vista/features/host_guest_chat/inbox.dart';
+import 'package:vista/shared/utils/local_storage.dart';
 import '../../auth/user_profile/user_profile_page.dart';
+import '../../fcm/firebase_push_notification.dart';
 import '../../location/device_current_location.dart';
 import '../category/bloc/property_category_bloc.dart';
 import '../requests.dart';
@@ -24,22 +25,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  // CategoryController? categoryController;
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  String username = '';
+  String vzx = '';
+
   @override
   void initState() {
-    super.initState();
+    LocalStorage.read(key: 'phone_number').then((value) {
+      setState(() {
+        username = value.toString();
+      });
+    });
 
+    LocalStorage.read(key: 'vc').then((value) {
+      setState(() {
+        vzx = value.toString();
+      });
+    });
+    super.initState();
     BlocProvider.of<PropertyCategoryBloc>(context)
         .add(GetPropertyCategoryEvent());
     _getUserCurrentLocation();
-
+    FcmTokenMenager().getToken();
     super.initState();
   }
 
@@ -53,13 +65,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getPages(ct) {
-    // delay for 2 seconds
-
     final List<Widget> widgetOptions = <Widget>[
       ExplorePage(categories: ct),
       const WishlistsPage(),
       const MyRequests(),
-      const InboxPage(),
+      InboxPage(u: username, v: vzx),
       const ProfilePage(),
     ];
 
@@ -68,6 +78,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final message = ModalRoute.of(context)!.settings.arguments;
+    log(message.toString());
     return PopScope(
       canPop: false,
       child: Scaffold(

@@ -35,7 +35,7 @@ class TokensInterceptors extends Interceptor {
       isRefreshTokenExpired = TokenHandler.isExpired(refreshToken);
     }
 
-    List<String> ignoreSubUrls = ['authentication/'];
+    List<String> ignoreSubUrls = ['authentication/', ];
     if (refreshToken == null || isRefreshTokenExpired) {
       ignoreSubUrls.add("property/");
     } else {}

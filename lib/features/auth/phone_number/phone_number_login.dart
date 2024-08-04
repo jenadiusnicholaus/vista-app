@@ -9,6 +9,7 @@ import 'package:social_login_buttons/social_login_buttons.dart';
 
 import 'package:vista/features/auth/email_login/email_login.dart';
 
+import '../../host_guest_chat/connection/bloc/xmppconnection_bloc.dart';
 import 'bloc/phone_number_auth_bloc.dart';
 
 class PhoneNumnerLogin extends StatefulWidget {
@@ -128,6 +129,7 @@ class _LoginPageState extends State<PhoneNumnerLogin> {
                                             context)
                                         .add(SendOTPEvent(
                                             phoneNumber: _completePhoneNumber));
+                                    // XmppconnectionBloc
                                   },
                             child: BlocBuilder<PhoneNumberAuthBloc,
                                 PhoneNumberAuthState>(

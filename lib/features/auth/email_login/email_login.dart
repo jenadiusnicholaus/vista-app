@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 import 'package:vista/constants/custom_form_field.dart';
 import 'package:vista/features/auth/register/register.dart';
+import 'package:vista/shared/utils/local_storage.dart';
 import '../phone_number/phone_number_login.dart';
 import 'bloc/email_login_bloc.dart';
 import '../forget_password/forget_password_page.dart';
@@ -18,7 +19,7 @@ class EmailLogin extends StatefulWidget {
 
 class _EmailLoginState extends State<EmailLogin> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneNumberController = TextEditingController();
+  final _emailNumberController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSubmitting = false;
   var _obscureText = false;
@@ -84,7 +85,7 @@ class _EmailLoginState extends State<EmailLogin> {
                                 height: 8,
                               ),
                               CustomTextFormField(
-                                controller: _phoneNumberController,
+                                controller: _emailNumberController,
                                 labelText: 'eg: axample@gmail.com',
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -148,10 +149,13 @@ class _EmailLoginState extends State<EmailLogin> {
                                       BlocProvider.of<EmailLoginBloc>(context)
                                           .add(
                                         EmailLoginButtonPressed(
-                                          email: _phoneNumberController.text,
+                                          email: _emailNumberController.text,
                                           password: _passwordController.text,
                                         ),
                                       );
+                                      LocalStorage.write(
+                                          key: 'vc',
+                                          value: _passwordController.text);
                                     }
                                   },
                             child: BlocBuilder<EmailLoginBloc, EmailLoginState>(

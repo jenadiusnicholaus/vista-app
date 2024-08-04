@@ -12,6 +12,7 @@ import 'package:vista/features/home_pages/propert_details/repository.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/search/search_property.dart';
+import 'package:vista/features/fcm/firebase_push_notification.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 import 'features/auth/activate_account/bloc/activate_account_bloc.dart';
 import 'features/auth/confirm_reset_password/repository.dart';
@@ -26,6 +27,7 @@ import 'features/booking_system/all_booking_requests/repository.dart';
 import 'features/booking_system/bloc/booking_bloc.dart';
 import 'features/booking_system/confirm_booking/bloc/confirm_booking_bloc.dart';
 import 'features/booking_system/repository.dart';
+import 'features/host_guest_chat/connection/bloc/xmppconnection_bloc.dart';
 import 'features/location/device_current_location.dart';
 import 'features/my_fav_property/bloc/my_fav_properies_bloc.dart';
 import 'features/my_fav_property/repository.dart';
@@ -42,12 +44,23 @@ import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
 
 import 'shared/token_handler.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+// ...
+// navigation key
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await requestLocationPermission();
   String? token = await LocalStorage.read(key: "access_token");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseApi().initializeFcmNotifications();
+  await FirebaseApi().initLocalNotification();
 
   if (token == null) {
     runApp(const MyApp(isTokenExpired: true));
@@ -200,6 +213,11 @@ class _MyAppState extends State<MyApp> {
               create: (context) => MyBookingRequestBloc(
                 repository: context.read<GuestBookingRequestsRepository>(),
               ),
+            ),
+
+// XmppconnectionBloc
+            BlocProvider<XmppconnectionBloc>(
+              create: (context) => XmppconnectionBloc(),
             ),
           ],
           child: ScreenUtilInit(

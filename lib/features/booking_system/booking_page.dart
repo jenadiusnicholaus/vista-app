@@ -325,8 +325,7 @@ class _BookingPageState extends State<BookingPage> {
                                   )
                                 : const Text("Add or confirm a phone number"),
                             trailing: (state is UserProfileLoaded) &&
-                                    (state
-                                        .userProfileModel.phoneNumberVerified!)
+                                    (state.userProfileModel.phoneIsVerified!)
                                 ? const Icon(
                                     Icons.verified,
                                     color: Colors.red,

@@ -42,8 +42,6 @@ class Environment {
   String MY_RENTING = "user-data/my-renting/";
   String MY_RENTING_REQUEST = "user-data/my-renting-request/";
   String MY_BOOKING_REQUEST = "user-data/my-booking-request/";
-  // http://localhost:8000/api/v1/user-data/my-renting-request/
-
 
   // properties
   String PROPERTIES = "property/property-list/";
@@ -51,6 +49,10 @@ class Environment {
   String PROPERTY_CATEGORIES = "property/categories/";
   String PROPERTY_REVIEW = "property/review-property/";
   static EnvironmentType environmentType = EnvironmentType.local_dev;
+
+  // fcm
+  String FCM_TOKEN_URL = "fcm/fcm-token/";
+  String SEND_NOTIFICATION = "fcm/send-notification/";
 
   String get getBaseUrl {
     switch (environmentType) {

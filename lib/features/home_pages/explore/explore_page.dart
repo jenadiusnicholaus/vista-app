@@ -127,6 +127,7 @@ class _ExplorePageState extends State<ExplorePage>
   void dispose() {
     _tabController.dispose();
     _propertiesPagingController.dispose();
+    
 
     super.dispose();
   }

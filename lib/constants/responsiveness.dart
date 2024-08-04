@@ -21,7 +21,7 @@ crossAxisCount() {
       ? 4
       : ScreenUtil().screenWidth > 600
           ? 3
-          : ScreenUtil().screenWidth > 400
+          : ScreenUtil().screenWidth > 500
               ? 2
               : 1;
 }

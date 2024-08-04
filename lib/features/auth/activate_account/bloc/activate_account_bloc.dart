@@ -16,8 +16,7 @@ class ActivateAccountBloc
   ActivateAccountBloc({
     required this.activateAccountRepository,
   }) : super(ActivateAccountInitial()) {
-    on<ActivateAccountEvent>((event, emit) {
-    });
+    on<ActivateAccountEvent>((event, emit) {});
 
     on<VerifyEmailEvent>((event, emit) async {
       // Delay
