@@ -488,7 +488,7 @@ class ChatScreen extends StatelessWidget {
 
       groupBy: (event) {
         DateTime dateTime =
-            DateTime.fromMillisecondsSinceEpoch(int.parse(event.time!));
+            DateTime.fromMillisecondsSinceEpoch(int.parse(event.time ?? ''));
         return DateFormat('yyyy-MM-dd').format(dateTime); // Group by date
       },
       groupComparator: (value1, value2) => value2.compareTo(value2),

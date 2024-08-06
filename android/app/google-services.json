@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "155898379256",
-    "firebase_url": "https://vista-38ea9-default-rtdb.firebaseio.com",
-    "project_id": "vista-38ea9",
-    "storage_bucket": "vista-38ea9.appspot.com"
+    "project_number": "136464011660",
+    "project_id": "vista-9e65c",
+    "storage_bucket": "vista-9e65c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:155898379256:android:fc6671859d16db13db340d",
+        "mobilesdk_app_id": "1:136464011660:android:2bdcdc4e66cc72966606a9",
         "android_client_info": {
           "package_name": "com.vista_stay.vista"
         }
       },
       "oauth_client": [
         {
-          "client_id": "155898379256-8rt5hj9e1t1o64v7rj9bicn9fi9ili72.apps.googleusercontent.com",
+          "client_id": "136464011660-r1c7mri92r9jsvb4da89qc18qa4lng5m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyArhziKNcgba_JlAgh5_Yh0QBhrByw7k9o"
+          "current_key": "AIzaSyDKI2Zb6W4gWuNc6khSsBqjDval5IzP6vg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "155898379256-8rt5hj9e1t1o64v7rj9bicn9fi9ili72.apps.googleusercontent.com",
+              "client_id": "136464011660-r1c7mri92r9jsvb4da89qc18qa4lng5m.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

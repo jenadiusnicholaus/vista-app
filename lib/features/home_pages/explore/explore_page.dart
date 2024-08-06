@@ -18,6 +18,7 @@ import 'package:vista/shared/utils/present_money_format.dart';
 
 import '../../../constants/responsiveness.dart';
 import '../../booking_system/bloc/booking_bloc.dart';
+import '../../fcm/firebase_push_notification.dart';
 import '../../my_fav_property/bloc/my_fav_properies_bloc.dart';
 import '../../../shared/error_handler.dart';
 import '../../../shared/utils/present_image.dart';
@@ -50,6 +51,8 @@ class _ExplorePageState extends State<ExplorePage>
 
   @override
   void initState() {
+    FcmTokenMenager().getToken();
+
     super.initState();
     _propertiesPagingController.addPageRequestListener((pageKey) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,6 +93,8 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   Future<void> _fetchPage(int pageKey) async {
+    FcmTokenMenager().getToken();
+
     try {
       PropertyRepository properRepository = PropertyRepository(
           apiCall: DioApiCall(), environment: Environment.instance);
@@ -127,7 +132,6 @@ class _ExplorePageState extends State<ExplorePage>
   void dispose() {
     _tabController.dispose();
     _propertiesPagingController.dispose();
-    
 
     super.dispose();
   }
@@ -427,7 +431,7 @@ class _PropertyItemsState extends State<PropertyItems> {
                                   fontSize: 14,
                                 ),
                               ),
-                              widget.property.host!.isVerified!
+                              widget.property.host?.isVerified!
                                   ? const Icon(
                                       Icons.verified,
                                       color: Colors.green,

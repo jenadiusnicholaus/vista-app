@@ -59,7 +59,7 @@ class Results {
   String? contractDraft;
   BORpolicy? bORpolicy;
   List<Prrs>? prrs;
-  List<Rdos>? rdos;
+  List<Rdos>? rdos; 
 
   Results(
       {this.id,

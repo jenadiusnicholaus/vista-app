@@ -5,11 +5,9 @@ import "package:firebase_messaging/firebase_messaging.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:vista/features/fcm/model.dart";
 import "package:vista/features/fcm/repository.dart";
-import "package:vista/shared/utils/local_storage.dart";
 
 import "../../shared/api_call/api.dart";
 import "../../shared/environment.dart";
-import "../../shared/error_handler.dart";
 
 // singleton class to handle all firebase messaging api
 
@@ -87,12 +85,10 @@ class FirebaseApi {
             if (notificationResponse.actionId == navigationActionId) {
               selectNotificationStream.add(notificationResponse.payload);
             }
-
             break;
         }
       },
 
-      // for background notifications when the app is terminated, the app is not running.
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 

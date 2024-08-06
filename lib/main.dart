@@ -82,6 +82,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isDarkModeEnabled = false;
   @override
+  void initState() {
+    FcmTokenMenager().getToken();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,

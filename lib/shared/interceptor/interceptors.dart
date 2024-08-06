@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
+import '../../features/fcm/firebase_push_notification.dart';
 import '../api_call/api.dart';
 import '../token_handler.dart';
 import 'repository.dart';
@@ -35,7 +36,9 @@ class TokensInterceptors extends Interceptor {
       isRefreshTokenExpired = TokenHandler.isExpired(refreshToken);
     }
 
-    List<String> ignoreSubUrls = ['authentication/', ];
+    List<String> ignoreSubUrls = [
+      'authentication/',
+    ];
     if (refreshToken == null || isRefreshTokenExpired) {
       ignoreSubUrls.add("property/");
     } else {}
@@ -55,6 +58,7 @@ class TokensInterceptors extends Interceptor {
       options.headers.remove("Authorization");
     }
     options.headers["Content-Type"] = "application/json";
+
     super.onRequest(options, handler);
   }
 

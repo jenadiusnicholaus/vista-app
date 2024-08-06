@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -380,7 +381,7 @@ class _RentalRequestsState extends State<RentalRequests> {
                               // Image section
                               Image.network(
                                 item.property?.image ?? '',
-                                width: 120.0, // Set a fixed width for the image
+                                width: 100.0, // Set a fixed width for the image
                                 height: double.infinity,
                                 fit: BoxFit.cover,
                               ),

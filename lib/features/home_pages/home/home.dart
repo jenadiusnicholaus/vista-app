@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
     BlocProvider.of<PropertyCategoryBloc>(context)
         .add(GetPropertyCategoryEvent());
     _getUserCurrentLocation();
-    FcmTokenMenager().getToken();
     super.initState();
   }
 

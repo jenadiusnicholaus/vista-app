@@ -6,13 +6,18 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:vista/constants/consts.dart';
 import 'package:vista/features/auth/user_profile/bloc/user_profile_bloc.dart';
+import 'package:vista/features/fcm/repository.dart';
+import 'package:vista/shared/api_call/api.dart';
+import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/widgets/error_snack_bar.dart';
 
+import '../../shared/utils/send_notification_util.dart';
 import '../../shared/widgets/confirm_booking_dialog.dart';
 import '../auth/user_profile/add_my_bank_infos_page.dart';
 import '../auth/user_profile/add_my_mw_infos.dart';
 import '../auth/user_profile/update_my_bank_infos.dart';
 import '../auth/user_profile/update_my_mw_infos.dart';
+import '../fcm/firebase_push_notification.dart';
 import '../home_pages/propert_details/bloc/property_details_bloc.dart';
 import 'add_booking_infos_page.dart';
 import 'bloc/booking_bloc.dart';
@@ -289,24 +294,41 @@ class _BookingPageState extends State<BookingPage> {
                                   IconButton(
                                       onPressed: () {},
                                       icon: const Icon(Icons.sms_outlined))),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.sms_outlined),
+                          ),
                           ListTile(
-                            title: const Text("Profile photo",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            title: const Text(
+                              "Profile photo",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             contentPadding: EdgeInsets.zero,
-                            subtitle: (state is UserProfileLoaded &&
-                                    state.userProfileModel.userProfilePic !=
+                            subtitle: Column(
+                              children: [
+                                if (state is UserProfileLoaded &&
+                                    state.userProfileModel.userProfilePic ==
                                         null)
-                                ? const Text("profile Picture looks good")
-                                : const Text("Add a clear profile picture"),
-                            trailing: (state is UserProfileLoaded &&
-                                    state.userProfileModel.userProfilePic !=
-                                        null)
+                                  const Text("Profile picture looks good")
+                                else
+                                  const Text("Add a clear profile picture")
+                              ],
+                            ),
+                            trailing: state is UserProfileLoaded &&
+                                    state.userProfileModel.userProfilePic ==
+                                        null
                                 ? IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      // Add functionality to edit the profile picture
+                                      _editProfilePicture();
+                                    },
                                     icon: const Icon(Icons.edit_outlined),
                                   )
                                 : IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      // Add functionality to add a new profile picture
+                                      _addProfilePicture();
+                                    },
                                     icon: const Icon(Icons.add_outlined),
                                   ),
                           ),
@@ -422,7 +444,7 @@ class _BookingPageState extends State<BookingPage> {
         ),
         persistentFooterButtons: [
           BlocConsumer<ConfirmBookingBloc, ConfirmBookingState>(
-            listener: (context, cState) {
+            listener: (context, cState) async {
               if (cState is ConfirmBookingLoading) {
                 setState(() {
                   isConfirming = true;
@@ -436,6 +458,9 @@ class _BookingPageState extends State<BookingPage> {
                 setState(() {
                   isConfirming = false;
                 });
+                var pstate = BlocProvider.of<UserProfileBloc>(context).state;
+                // Send notication
+                await notify(pstate, context);
                 // refresh the booking details
                 BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
                   propertyId: widget.property.id,
@@ -670,6 +695,19 @@ class _BookingPageState extends State<BookingPage> {
         ),
       ),
     );
+  }
+
+  // Define the methods for editing and adding profile pictures
+  void _editProfilePicture() {
+    // Implement the logic to edit the profile picture
+    // For example, navigate to a new screen or open a dialog
+    print("Edit profile picture");
+  }
+
+  void _addProfilePicture() {
+    // Implement the logic to add a new profile picture
+    // For example, open the image picker
+    print("Add profile picture");
   }
 
   _buildBankCardPaymentMethod() {

@@ -44,44 +44,41 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDdiDmN1NHWkOgwVD0brC7BEQ7pLSYf2tc',
-    appId: '1:155898379256:web:5402e1b7d193e4a7db340d',
-    messagingSenderId: '155898379256',
-    projectId: 'vista-38ea9',
-    authDomain: 'vista-38ea9.firebaseapp.com',
-    databaseURL: 'https://vista-38ea9-default-rtdb.firebaseio.com',
-    storageBucket: 'vista-38ea9.appspot.com',
-    measurementId: 'G-ZBGD9V6MK0',
+    apiKey: 'AIzaSyDIZG9Yo9Ntgd8kCA74cXFkcVN5b3fqNPU',
+    appId: '1:136464011660:web:14bea54c1c4d689e6606a9',
+    messagingSenderId: '136464011660',
+    projectId: 'vista-9e65c',
+    authDomain: 'vista-9e65c.firebaseapp.com',
+    storageBucket: 'vista-9e65c.appspot.com',
+    measurementId: 'G-GPX01XZLRB',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyArhziKNcgba_JlAgh5_Yh0QBhrByw7k9o',
-    appId: '1:155898379256:android:fc6671859d16db13db340d',
-    messagingSenderId: '155898379256',
-    projectId: 'vista-38ea9',
-    databaseURL: 'https://vista-38ea9-default-rtdb.firebaseio.com',
-    storageBucket: 'vista-38ea9.appspot.com',
+    apiKey: 'AIzaSyDKI2Zb6W4gWuNc6khSsBqjDval5IzP6vg',
+    appId: '1:136464011660:android:2bdcdc4e66cc72966606a9',
+    messagingSenderId: '136464011660',
+    projectId: 'vista-9e65c',
+    storageBucket: 'vista-9e65c.appspot.com',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDO8GV3GkwaBS-n55DNLXj5e2KL0ZhLzes',
-    appId: '1:155898379256:ios:937cc529440affaadb340d',
-    messagingSenderId: '155898379256',
-    projectId: 'vista-38ea9',
-    databaseURL: 'https://vista-38ea9-default-rtdb.firebaseio.com',
-    storageBucket: 'vista-38ea9.appspot.com',
-    iosClientId: '155898379256-ll16lngrdugosh918lug4431cl63o0g0.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAt6HyoWg2vwbM_eBNgdEkd5YZgksHpCrA',
+    appId: '1:136464011660:ios:d16cd2e0374c16986606a9',
+    messagingSenderId: '136464011660',
+    projectId: 'vista-9e65c',
+    storageBucket: 'vista-9e65c.appspot.com',
+    iosClientId: '136464011660-bcuejnvm3nidul6k5dc8fo59e6fms2cv.apps.googleusercontent.com',
     iosBundleId: 'com.example.vista',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDdiDmN1NHWkOgwVD0brC7BEQ7pLSYf2tc',
-    appId: '1:155898379256:web:7f2e1808070e29e3db340d',
-    messagingSenderId: '155898379256',
-    projectId: 'vista-38ea9',
-    authDomain: 'vista-38ea9.firebaseapp.com',
-    databaseURL: 'https://vista-38ea9-default-rtdb.firebaseio.com',
-    storageBucket: 'vista-38ea9.appspot.com',
-    measurementId: 'G-EK2RVBWN5D',
+    apiKey: 'AIzaSyDIZG9Yo9Ntgd8kCA74cXFkcVN5b3fqNPU',
+    appId: '1:136464011660:web:d67bbceee95531066606a9',
+    messagingSenderId: '136464011660',
+    projectId: 'vista-9e65c',
+    authDomain: 'vista-9e65c.firebaseapp.com',
+    storageBucket: 'vista-9e65c.appspot.com',
+    measurementId: 'G-P437QSCG3F',
   );
+
 }

@@ -44,22 +44,22 @@ class FcmRepository {
     }
   }
 
-  Future<void> sendNotification(String title, String body) async {
+  Future<void> sendNotification({
+    required String title,
+    required String body,
+    required String token,
+    required senderId,
+    required dynamic senderTimeStamp,
+  }) async {
     var response = await apiCall.post(
-        "${environment.getBaseUrl}${environment.SEND_NOTIFICATION}",
-        data: {"title": title, "body": body});
-    if (response.statusCode == 200) {
-      return;
-    } else {
-      throw Exception(response.data);
-    }
-  }
-
-  Future<void> sendNotificationToUser(
-      String title, String body, String token) async {
-    var response = await apiCall.post(
-        "${environment.getBaseUrl}${environment.SEND_NOTIFICATION}",
-        data: {"title": title, "body": body, "token": token});
+      "${environment.getBaseUrl}${environment.SEND_NOTIFICATION}",
+      data: {
+        "title": title,
+        "body": body,
+        "device_registration_token": token,
+        "data": {"username": "$senderId", "timestamp": "$senderTimeStamp"}
+      },
+    );
     if (response.statusCode == 200) {
       return;
     } else {
