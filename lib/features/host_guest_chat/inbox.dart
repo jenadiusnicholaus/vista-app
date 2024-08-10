@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vista/features/auth/user_profile/models.dart';
 import 'package:vista/shared/utils/extentions.dart';
 import 'package:xmpp_plugin/custom_element.dart';
 import 'package:xmpp_plugin/error_response_event.dart';
@@ -17,7 +20,9 @@ import 'package:xmpp_plugin/success_response_event.dart';
 import 'package:xmpp_plugin/xmpp_plugin.dart';
 import '../../data/sample_data.dart';
 import '../../shared/native_log_helper.dart';
+import '../../shared/utils/build_avatar.dart';
 import 'chat.dart';
+import 'my_rosters/bloc/my_rosters_bloc.dart';
 
 class InboxPage extends StatefulWidget {
   final String u;
@@ -60,7 +65,7 @@ class _InboxPageState extends State<InboxPage>
   List<PresentModel> presentMo = [];
   String connectionStatus = "Disconnected";
   String connectionStatusMessage = "";
-  List<dynamic> myRosters = [];
+  List<dynamic> _myRosters = [];
   List<dynamic> myMessages = [];
   bool loadingRoster = false;
   @override
@@ -83,25 +88,27 @@ class _InboxPageState extends State<InboxPage>
   }
 
   Future<void> fetchRoester() async {
-    setState(() {
-      loadingRoster = true;
-    });
-    try {
-      var rosters = await flutterXmpp.getMyRosters();
-      setState(() {
-        myRosters = rosters.map((e) => e).toList();
-      });
-      if (rosters != null) {
-        setState(() {
-          loadingRoster = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        loadingRoster = false;
-      });
-      log('Error fetching rosters: $e');
-    }
+    BlocProvider.of<MyRostersBloc>(context).add(GetMyRosters(
+        username: widget.u, host: _hostController.text.trimRight()));
+    // setState(() {
+    //   loadingRoster = true;
+    // });
+    // try {
+    //   var rosters = await flutterXmpp.getMyRosters();
+    //   setState(() {
+    //     myRosters = rosters.map((e) => e).toList();
+    //   });
+    //   if (rosters != null) {
+    //     setState(() {
+    //       loadingRoster = false;
+    //     });
+    //   }
+    // } catch (e) {
+    //   setState(() {
+    //     loadingRoster = false;
+    //   });
+    //   log('Error fetching rosters: $e');
+    // }
   }
 
   Future<void> connect() async {
@@ -237,69 +244,94 @@ class _InboxPageState extends State<InboxPage>
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if (loadingRoster)
-              const Center(child: CircularProgressIndicator())
-            else if (transformRoster(myRosters.toString()).isNotEmpty)
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                  itemCount: transformRoster(myRosters.toString()).length,
-                  itemBuilder: (context, index) {
-                    // final message = messages[index];
+            // if (loadingRoster)
+            //   const Center(child: CircularProgressIndicator())
+            // else if (transformRoster(myRosters.toString()).isNotEmpty)
+            BlocBuilder<MyRostersBloc, MyRostersState>(
+                builder: (context, state) {
+              if (state is MyRostersLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                    final keyValuePairs = transformRoster(myRosters.toString());
+              if (state is MyRostersError) {
+                return Center(
+                  child: Column(
+                    children: [
+                      const Icon(Icons.person_outline),
+                      Text(state.errorMessage),
+                    ],
+                  ),
+                );
+              }
 
-                    // log(keyValuePairs);
+              if (state is MyRostersLoaded) {
+                final myRosters = state.myRosters;
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    itemCount: myRosters.length,
+                    itemBuilder: (context, index) {
+                      // final message = messages[index];
 
-                    return Slidable(
-                      // Specify the action pane for the slidable
-                      startActionPane: ActionPane(
-                        motion:
-                            const DrawerMotion(), // Use DrawerMotion or another motion
-                        children: [
-                          // Define actions like deleting
-                          SlidableAction(
-                            onPressed: (BuildContext context) {
-                              setState(() => messages.removeAt(index));
-                            },
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: const Icon(Icons.person),
+                      // final keyValuePairs =
+                      //     transformRoster(myRosters.toString());
+
+                      // log(keyValuePairs);
+
+                      UserProfileModel myRoster = myRosters[index];
+
+                      return Slidable(
+                        // Specify the action pane for the slidable
+                        startActionPane: ActionPane(
+                          motion:
+                              const DrawerMotion(), // Use DrawerMotion or another motion
+                          children: [
+                            // Define actions like deleting
+                            SlidableAction(
+                              onPressed: (BuildContext context) {
+                                setState(() => messages.removeAt(index));
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
                         ),
-                        title: Text(keyValuePairs[index]['username'] ?? ""),
-                        subtitle: Text(keyValuePairs[index]['nickname'] ??
-                            'Unnamed Contact'),
-                        isThreeLine: true,
-                        onTap: () async {
-                          Get.to(() => ChatPage(
-                                flutterXmpp: flutterXmpp,
-                                from: widget.u,
-                                to: keyValuePairs[index]['jid']!,
-                                host: _hostController.text,
-                              ));
-                        },
-                      ),
-                    );
-                  },
-                ),
-              )
-            else
-              const Center(
-                child: Column(
-                  children: [
-                    Icon(Icons.person_outline),
-                    Text("Not Contact"),
-                  ],
-                ),
-              ),
+                        child: ListTile(
+                          leading: buidAvatar(myRoster.userProfilePic),
+                          title: Text(myRoster.firstName.toString()),
+                          subtitle: Text(myRoster.email.toString()),
+                          isThreeLine: true,
+                          onTap: () async {
+                            Get.to(() => ChatPage(
+                                  flutterXmpp: flutterXmpp,
+                                  from: widget.u,
+                                  to: "${myRoster.phoneNumber}@${_hostController.text}",
+                                  host: _hostController.text,
+                                  toName: myRoster.firstName.toString(),
+                                  toEmail: myRoster.email.toString(),
+                                  toImage: myRoster.userProfilePic.toString(),
+                                ));
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              return Text('');
+            })
+
+            // else
+            //   const Center(
+            //     child: Column(
+            //       children: [
+            //         Icon(Icons.person_outline),
+            //         Text("Not Contact"),
+            //       ],
+            //     ),
+            //   ),
           ],
         ),
       ),
@@ -339,14 +371,14 @@ class _InboxPageState extends State<InboxPage>
   @override
   void onPresenceChange(PresentModel presentModel) {
     presentMo.add(presentModel);
-    flutterXmpp.getMyRosters().then((value) => {
-          setState(() {
-            myRosters = value.map((e) {
-              return e.toString();
-            }).toList();
-            // requestMamMessages();
-          })
-        });
+    // flutterXmpp.getMyRosters().then((value) => {
+    //       setState(() {
+    //         myRosters = value.map((e) {
+    //           return e.toString();
+    //         }).toList();
+    //         // requestMamMessages();
+    //       })
+    //     });
     log('onPresenceChange ~~>>${presentModel.toJson()}');
   }
 

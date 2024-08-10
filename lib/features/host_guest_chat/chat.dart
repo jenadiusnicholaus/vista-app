@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:vista/constants/custom_form_field.dart';
 import 'package:vista/shared/utils/extentions.dart';
 import 'package:xmpp_plugin/ennums/presence_type.dart';
 import 'package:xmpp_plugin/error_response_event.dart';
@@ -21,6 +22,7 @@ import '../../data/sample_data.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:emoji_picker_flutter/src/skin_tones/skin_tone_config.dart';
 
+import '../../shared/utils/build_avatar.dart';
 import '../../shared/widgets/emoj_wedget.dart';
 
 class ChatPage extends StatefulWidget {
@@ -28,16 +30,21 @@ class ChatPage extends StatefulWidget {
   final String from;
   final String to;
   final String host;
+  final String toName;
+  final String toImage;
+  final String toEmail;
 
 // Accept initial messages
 
-  const ChatPage({
-    super.key,
-    required this.flutterXmpp,
-    required this.from,
-    required this.to,
-    required this.host,
-  }); // Constructor
+  const ChatPage(
+      {super.key,
+      required this.flutterXmpp,
+      required this.from,
+      required this.to,
+      required this.host,
+      required this.toName,
+      required this.toEmail,
+      required this.toImage}); // Constructor
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -196,17 +203,19 @@ class _ChatPageState extends State<ChatPage>
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: buidAvatar(widget.toImage),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Text('${widget.to.split('@')[0]}',
-                    style: const TextStyle(fontSize: 16.0)),
+                Text(widget.toName, style: const TextStyle(fontSize: 16.0)),
               ],
             ),
             // typing status
-            const SizedBox(height: 5.0),
             Row(
               children: [
                 Text(
@@ -214,7 +223,7 @@ class _ChatPageState extends State<ChatPage>
                       ? toIsTyping
                           ? 'Typing...'
                           : 'Online'
-                      : '',
+                      : '@${widget.toEmail}',
                   style: TextStyle(
                       fontSize: 12.0,
                       color: toIsOnLine ? Colors.green : Colors.grey),
@@ -234,7 +243,6 @@ class _ChatPageState extends State<ChatPage>
                 from: widget.from,
                 to: widget.to,
                 host: widget.host,
-                // isMe: isMe,
                 smsScrollController: _smsScrollController,
               ),
             ),
@@ -242,39 +250,49 @@ class _ChatPageState extends State<ChatPage>
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _emojiShowing = !_emojiShowing;
-                        });
-                      },
-                      icon: _emojiShowing
-                          ? const Icon(
-                              Icons.emoji_emotions,
-                              color: Colors.grey,
-                            )
-                          : const Icon(
-                              Icons.emoji_emotions_outlined,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: CustomTextFormField(
+                        onChanged: (text) {
+                          if (text.isNotEmpty) {
+                            _changeTypingStatus(widget.to, 'composing');
+                          } else {
+                            _changeTypingStatus(widget.to, "inactive");
+                          }
+                        },
+                        focusNode: _focusNode,
+                        controller: _smsTextController,
+                        scrollController: _scrollController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                            borderSide: const BorderSide(
                               color: Colors.grey,
                             ),
-                    ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      onChanged: (text) {
-                        if (text.isNotEmpty) {
-                          _changeTypingStatus(widget.to, 'composing');
-                        } else {
-                          _changeTypingStatus(widget.to, "inactive");
-                        }
-                      },
-                      focusNode: _focusNode,
-                      controller: _smsTextController,
-                      scrollController: _scrollController,
-                      decoration:
-                          const InputDecoration(hintText: 'Type a message'),
+                          ),
+                          prefixIcon: Material(
+                            color: Colors.transparent,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _emojiShowing = !_emojiShowing;
+                                });
+                              },
+                              icon: _emojiShowing
+                                  ? const Icon(
+                                      Icons.cancel,
+                                      color: Colors.grey,
+                                    )
+                                  : const Icon(
+                                      Icons.emoji_emotions_outlined,
+                                      color: Colors.grey,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Material(
