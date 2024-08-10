@@ -20,10 +20,11 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
       try {
         UserProfileModel userProfileModel =
             await userProfileRepository.getUserProfile();
-        emit(UserProfileLoaded(userProfileModel));
         await LocalStorage.write(
             key: 'phone_number',
             value: userProfileModel.phoneNumber.toString());
+
+        emit(UserProfileLoaded(userProfileModel));
       } catch (e) {
         emit(UserProfileError("Error fetching user profile"));
       }

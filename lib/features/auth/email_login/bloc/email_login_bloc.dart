@@ -7,22 +7,20 @@ import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
 import '../../../../shared/error_handler.dart';
+import '../../user_profile/bloc/user_profile_bloc.dart';
 
 part 'email_login_event.dart';
 part 'email_login_state.dart';
 
 class EmailLoginBloc extends Bloc<EmailLoginEvent, EmailLoginState> {
   final EmailLoginRepository? emailLoginRepository;
-  EmailLoginBloc({this.emailLoginRepository}) : super(EmailLoginInitial()) {
-    on<EmailLoginEvent>((event, emit) {
-      // TODO: implement event handler
-    });
-
+  final UserProfileBloc? userProfileBloc;
+  EmailLoginBloc({this.emailLoginRepository, required this.userProfileBloc})
+      : super(EmailLoginInitial()) {
     on<EmailLoginButtonPressed>((event, emit) async {
       // Delay
       emit(EmailLoginLoading());
       await Future.delayed(const Duration(seconds: 5));
-
       try {
         LoginModel loginModel = await emailLoginRepository!.emailLogin(
           email: event.email,
@@ -30,7 +28,9 @@ class EmailLoginBloc extends Bloc<EmailLoginEvent, EmailLoginState> {
         );
         LocalStorage.write(key: "access_token", value: loginModel.access!);
         LocalStorage.write(key: "refresh_token", value: loginModel.refresh!);
+        userProfileBloc!.add(GetUserProfileEvent());
         emit(EmailLoginSuccess(userModel: loginModel));
+
         Get.offAndToNamed("/home");
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
@@ -49,8 +49,7 @@ class EmailLoginBloc extends Bloc<EmailLoginEvent, EmailLoginState> {
           refreshToken: event.refreshToken,
         );
         if (res != null) {
-          LocalStorage.delete(key: "access_token");
-          LocalStorage.delete(key: "refresh_token");
+          LocalStorage.deleteAll();
         }
 
         emit(LogoutSuccess(

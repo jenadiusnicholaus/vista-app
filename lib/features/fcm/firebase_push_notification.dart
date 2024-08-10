@@ -6,6 +6,7 @@ import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:vista/features/fcm/model.dart";
 import "package:vista/features/fcm/repository.dart";
 
+import "../../main.dart";
 import "../../shared/api_call/api.dart";
 import "../../shared/environment.dart";
 
@@ -158,6 +159,7 @@ Future<void> handleBackgroundHandler(RemoteMessage? message) async {
   log('title: ${message?.notification?.title}');
   log('body: ${message?.notification?.body}');
   log('data: ${message?.data}');
+  // navigatorKey.currentState!.pushNamed('/notifications', arguments: message);
 }
 
 void handleMassage(RemoteMessage? message) {
@@ -165,6 +167,7 @@ void handleMassage(RemoteMessage? message) {
   log('title: ${message?.notification?.title}');
   log('body: ${message?.notification?.body}');
   log('data: ${message?.data}');
+  // navigatorKey.currentState!.pushNamed('/notifications', arguments: message);
 }
 
 iOSInitializationSettings() {

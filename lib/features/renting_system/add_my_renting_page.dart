@@ -13,7 +13,6 @@ class AddRentingPage extends StatefulWidget {
   final dynamic property;
   final int selectDuration;
   final dynamic totalPrice;
-  
 
   const AddRentingPage({
     super.key,
@@ -269,17 +268,9 @@ class _AddRentingPageState extends State<AddRentingPage> {
                 BlocListener<MyRentingBloc, MyRentingState>(
                   listener: (context, state) {
                     if (state is AddMyRentingSuccess) {
-                      showMessage(
-                          message: state.message,
-                          title: "Success",
-                          isAnError: false);
                       isAdding = false;
                     }
                     if (state is AddMyRentingFailure) {
-                      showMessage(
-                          message: state.errorMessage,
-                          title: "Error",
-                          isAnError: true);
                       isAdding = false;
                     }
                     if (state is AddMyRentingLoading) {

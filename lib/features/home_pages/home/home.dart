@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vista/features/home_pages/explore/explore_page.dart';
 import 'package:vista/features/host_guest_chat/inbox.dart';
 import 'package:vista/shared/utils/local_storage.dart';
+import '../../auth/user_profile/bloc/user_profile_bloc.dart';
 import '../../auth/user_profile/user_profile_page.dart';
-import '../../fcm/firebase_push_notification.dart';
 import '../../location/device_current_location.dart';
 import '../category/bloc/property_category_bloc.dart';
 import '../requests.dart';
@@ -31,27 +31,32 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  String username = '';
+  String? username;
   String vzx = '';
 
   @override
   void initState() {
-    LocalStorage.read(key: 'phone_number').then((value) {
-      setState(() {
-        username = value.toString();
-      });
-    });
+    super.initState();
+    BlocProvider.of<UserProfileBloc>(context).add(GetUserProfileEvent());
+
+    BlocProvider.of<PropertyCategoryBloc>(context)
+        .add(GetPropertyCategoryEvent());
+    _getCreds();
+    _getUserCurrentLocation();
+  }
+
+  _getCreds() {
+    var userPState = BlocProvider.of<UserProfileBloc>(context).state;
 
     LocalStorage.read(key: 'vc').then((value) {
       setState(() {
         vzx = value.toString();
+        username = userPState is UserProfileLoaded
+            ? userPState.userProfileModel.phoneNumber
+            : "";
+        log(vzx);
       });
     });
-    super.initState();
-    BlocProvider.of<PropertyCategoryBloc>(context)
-        .add(GetPropertyCategoryEvent());
-    _getUserCurrentLocation();
-    super.initState();
   }
 
   _getUserCurrentLocation() async {
@@ -68,7 +73,15 @@ class _HomePageState extends State<HomePage> {
       ExplorePage(categories: ct),
       const WishlistsPage(),
       const MyRequests(),
-      InboxPage(u: username, v: vzx),
+      BlocBuilder<UserProfileBloc, UserProfileState>(
+        builder: (context, state) {
+          return InboxPage(
+              u: state is UserProfileLoaded
+                  ? state.userProfileModel.phoneNumber!
+                  : "",
+              v: vzx);
+        },
+      ),
       const ProfilePage(),
     ];
 
@@ -77,8 +90,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final message = ModalRoute.of(context)!.settings.arguments;
-    log(message.toString());
+    // final message = ModalRoute.of(context)!.settings.arguments;
+    // if (username == null) {
+    // _getCreds();
+    // }/
+
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -149,7 +165,7 @@ class _ShimmerLoaderState extends State<ShimmerLoader> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize:
-              Size.fromHeight(kToolbarHeight), // Standard AppBar height
+              const Size.fromHeight(kToolbarHeight), // Standard AppBar height
           child: Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
             highlightColor: Colors.grey[100]!,

@@ -1,7 +1,7 @@
 class UserProfileModel {
   String? firstName;
   String? lastName;
-  Null? userProfilePic;
+  dynamic userProfilePic;
   String? email;
   String? phoneNumber;
   bool? phoneIsVerified;

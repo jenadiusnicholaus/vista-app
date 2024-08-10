@@ -6,18 +6,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:vista/constants/consts.dart';
 import 'package:vista/features/auth/user_profile/bloc/user_profile_bloc.dart';
-import 'package:vista/features/fcm/repository.dart';
-import 'package:vista/shared/api_call/api.dart';
-import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/widgets/error_snack_bar.dart';
-
 import '../../shared/utils/send_notification_util.dart';
 import '../../shared/widgets/confirm_booking_dialog.dart';
 import '../auth/user_profile/add_my_bank_infos_page.dart';
 import '../auth/user_profile/add_my_mw_infos.dart';
 import '../auth/user_profile/update_my_bank_infos.dart';
 import '../auth/user_profile/update_my_mw_infos.dart';
-import '../fcm/firebase_push_notification.dart';
 import '../home_pages/propert_details/bloc/property_details_bloc.dart';
 import 'add_booking_infos_page.dart';
 import 'bloc/booking_bloc.dart';
@@ -282,22 +277,19 @@ class _BookingPageState extends State<BookingPage> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ListTile(
-                              title: const Text("Send Message to Host",
+                          const ListTile(
+                              title: Text("Send Message to Host",
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: const Text(
+                              subtitle: Text(
                                   "Share why you're traveling, who's coming with you, and what you love about the space"),
                               contentPadding: EdgeInsets.zero,
                               trailing:
                                   // for going to send sms
                                   IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.sms_outlined))),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.sms_outlined),
-                          ),
+                                      onPressed: null,
+                                      icon: Icon(Icons.sms_outlined))),
+
                           ListTile(
                             title: const Text(
                               "Profile photo",
@@ -305,13 +297,14 @@ class _BookingPageState extends State<BookingPage> {
                             ),
                             contentPadding: EdgeInsets.zero,
                             subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (state is UserProfileLoaded &&
                                     state.userProfileModel.userProfilePic ==
                                         null)
-                                  const Text("Profile picture looks good")
-                                else
                                   const Text("Add a clear profile picture")
+                                else
+                                  const Text("Edit")
                               ],
                             ),
                             trailing: state is UserProfileLoaded &&
@@ -352,9 +345,9 @@ class _BookingPageState extends State<BookingPage> {
                                     Icons.verified,
                                     color: Colors.red,
                                   )
-                                : IconButton(
+                                : TextButton(
                                     onPressed: () {},
-                                    icon: const Text("Verify Now"),
+                                    child: const Text("Verify Now"),
                                   ),
                           ),
                         ],
@@ -402,13 +395,13 @@ class _BookingPageState extends State<BookingPage> {
                       ),
                       ListTile(
                         title: Text(
-                          ". Follow the house rulesTreat your Host’s home like your own",
+                          "- Follow the house rules",
                         ),
                         contentPadding: EdgeInsets.zero,
                       ),
                       ListTile(
                         title: Text(
-                          ". Treat your Host’s home like your own",
+                          "- Treat your Host’s home like your own",
                         ),
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -459,9 +452,24 @@ class _BookingPageState extends State<BookingPage> {
                   isConfirming = false;
                 });
                 var pstate = BlocProvider.of<UserProfileBloc>(context).state;
-                // Send notication
-                await notify(pstate, context);
-                // refresh the booking details
+
+                var body = pstate is UserProfileLoaded
+                    ? "One more booking for ${pstate.userProfileModel.firstName}"
+                    : "Booking confirmed";
+
+                var token = widget.property.host.fcmtoken.fcmToken;
+                var senderId = pstate is UserProfileLoaded
+                    ? pstate.userProfileModel.email
+                    : "Vista";
+
+                await notify(
+                  body: body,
+                  token: token,
+                  userid: senderId,
+                  context: context,
+                  toUserid: widget.property.host.user.id,
+                );
+
                 BlocProvider.of<BookingBloc>(context).add(GetMyBooking(
                   propertyId: widget.property.id,
                 ));

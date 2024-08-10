@@ -11,9 +11,11 @@ import 'package:intl/intl.dart' as intl;
 import 'package:vista/shared/widgets/error_snack_bar.dart';
 
 import '../../constants/consts.dart';
+import '../../shared/utils/send_notification_util.dart';
 import '../../shared/widgets/confirm_booking_dialog.dart';
 import '../auth/user_profile/add_my_bank_infos_page.dart';
 import '../auth/user_profile/add_my_mw_infos.dart';
+import '../auth/user_profile/bloc/user_profile_bloc.dart';
 import '../auth/user_profile/update_my_bank_infos.dart';
 import '../auth/user_profile/update_my_mw_infos.dart';
 import '../home_pages/explore/models.dart';
@@ -64,6 +66,8 @@ class _RentingPageState extends State<RentingPage> {
       totalPrice = double.parse(widget.property.price) *
           double.parse(widget.property.rdos[0].timeInNumber.toString());
     }
+    BlocProvider.of<UserProfileBloc>(context).add(GetUserProfileEvent());
+
     BlocProvider.of<MyRentingBloc>(context)
         .add(GetMyRenting(widget.property.id));
   }
@@ -635,7 +639,7 @@ class _RentingPageState extends State<RentingPage> {
                       }
                     : null,
             child: BlocConsumer<ConfirmRentingBloc, ConfirmRentingState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is ConfirmRentingLoading) {
                   setState(() {
                     isConfirming = true;
@@ -645,6 +649,26 @@ class _RentingPageState extends State<RentingPage> {
                   setState(() {
                     isConfirming = false;
                   });
+
+                  var pstate = BlocProvider.of<UserProfileBloc>(context).state;
+
+                  var body = pstate is UserProfileLoaded
+                      ? "One more booking for ${pstate.userProfileModel.firstName}"
+                      : "Booking confirmed";
+
+                  var token = widget.property.host.fcmtoken.fcmToken;
+                  var senderId = pstate is UserProfileLoaded
+                      ? pstate.userProfileModel.email
+                      : "Vista";
+
+                  await notify(
+                    body: body,
+                    token: token,
+                    userid: senderId,
+                    context: context,
+                    toUserid: widget.property.host.user.id,
+                  );
+
                   showMessage(
                       message: state.message,
                       title: "success",
@@ -657,9 +681,6 @@ class _RentingPageState extends State<RentingPage> {
                   setState(() {
                     isConfirming = false;
                   });
-
-                  BlocProvider.of<MyRentingBloc>(context)
-                      .add(GetMyRenting(widget.property.id));
 
                   showMessage(
                       message: state.message, title: "Error", isAnError: true);

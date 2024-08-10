@@ -28,7 +28,8 @@ class RegistrationRepository {
       "date_of_birth": dateOfBirth,
       "password": password,
       "password2": password2,
-      "agreed_to_Terms": agreedToTerms
+      "agreed_to_Terms": agreedToTerms,
+      "user_type": "guest"
     };
     var response = await apiCall.post(
         environment.getBaseUrl + environment.USER_REGISTRATION,

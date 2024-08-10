@@ -45,13 +45,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Step 3: Design the Profile UI
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: state.userProfileModel.userProfilePic !=
+                    backgroundImage: state.userProfileModel.userProfilePic ==
                             null
-                        ? NetworkImage(
+                        ? const AssetImage('assets/images/profile.webp')
+                        : NetworkImage(
                             state.userProfileModel.userProfilePic.toString(),
-                          )
-                        : const AssetImage('assets/images/profile.webp')
-                            as ImageProvider,
+                          ) as ImageProvider,
                   ),
                   const SizedBox(height: 20),
                   Text(

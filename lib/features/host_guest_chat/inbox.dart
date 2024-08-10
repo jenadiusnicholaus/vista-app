@@ -62,56 +62,58 @@ class _InboxPageState extends State<InboxPage>
   String connectionStatusMessage = "";
   List<dynamic> myRosters = [];
   List<dynamic> myMessages = [];
+  bool loadingRoster = false;
   @override
   void initState() {
-    // _passwordController.text = widget.v;
-    // _userNameController.text = widget.u;
-
     log(widget.u);
     log(widget.v);
 
     checkStoragePermission();
     XmppConnection.addListener(this);
     super.initState();
-    log('didChangeAppLifecycleState() initState');
     WidgetsBinding.instance.addObserver(this);
     log(connectionStatus);
     connect();
 
     if (connectionStatus == 'Authenticated') {
-      // await disconnectXMPP();
-      flutterXmpp.getMyRosters().then((value) => {
-            setState(() {
-              myRosters = value.map((e) {
-                return e.toString();
-              }).toList();
-              // requestMamMessages();
-            })
-          });
-      log(flutterXmpp.toString());
     } else if (connectionStatus == 'Disconnected') {
       connect();
-      if (flutterXmpp != null) {
-        // flutterXmpp
-        flutterXmpp.getMyRosters().then((value) => {
-              setState(() {
-                myRosters = value.map((e) {
-                  return e.toString();
-                }).toList();
-                // requestMamMessages();
-              })
-            });
+      fetchRoester();
+    }
+  }
 
-        log(myRosters.length.toString());
+  Future<void> fetchRoester() async {
+    setState(() {
+      loadingRoster = true;
+    });
+    try {
+      var rosters = await flutterXmpp.getMyRosters();
+      setState(() {
+        myRosters = rosters.map((e) => e).toList();
+      });
+      if (rosters != null) {
+        setState(() {
+          loadingRoster = false;
+        });
       }
+    } catch (e) {
+      setState(() {
+        loadingRoster = false;
+      });
+      log('Error fetching rosters: $e');
     }
   }
 
   Future<void> connect() async {
     log('Connecting to XMPP server');
+    if (_hostController.text.isEmpty) {
+      log('Host is empty');
+      return;
+    }
+
     final param = {
       "user_jid":
-          "${widget.u..trimRight()}@${_hostController.text}/${Platform.isAndroid ? "Android" : "iOS"}",
+          "${widget.u.trimRight()}@${_hostController.text}/${Platform.isAndroid ? "Android" : "iOS"}",
       "password": widget.v.trimRight(),
       "host": _hostController.text,
       "port": '5222',
@@ -127,8 +129,9 @@ class _InboxPageState extends State<InboxPage>
       flutterXmpp = XmppConnection(param);
       await flutterXmpp.start(_onError);
       await flutterXmpp.login();
+      log('Connected to XMPP server successfully');
     } catch (e) {
-      log(e.toString());
+      log('Error connecting to XMPP server: ${e.toString()}');
     }
   }
 
@@ -165,8 +168,8 @@ class _InboxPageState extends State<InboxPage>
       final PermissionStatus _permissionStatus =
           await Permission.storage.request();
       if (_permissionStatus.isGranted) {
-        // String filePath = await NativeLogHelper().getDefaultLogFilePath();
-        // log('logFilePath: $filePath');
+        String filePath = await NativeLogHelper().getDefaultLogFilePath();
+        log('logFilePath: $filePath');
       } else {
         log('logFilePath: please allow permission');
       }
@@ -231,67 +234,75 @@ class _InboxPageState extends State<InboxPage>
 
         //
       ),
-      body: transformRoster(myRosters.toString()).isNotEmpty
-          ? ListView.builder(
-              itemCount: transformRoster(myRosters.toString()).length,
-              itemBuilder: (context, index) {
-                // final message = messages[index];
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (loadingRoster)
+              const Center(child: CircularProgressIndicator())
+            else if (transformRoster(myRosters.toString()).isNotEmpty)
+              SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: ListView.builder(
+                  itemCount: transformRoster(myRosters.toString()).length,
+                  itemBuilder: (context, index) {
+                    // final message = messages[index];
 
-                final keyValuePairs = transformRoster(myRosters.toString());
+                    final keyValuePairs = transformRoster(myRosters.toString());
 
-                // log(keyValuePairs);
+                    // log(keyValuePairs);
 
-                return Slidable(
-                  // Specify the action pane for the slidable
-                  startActionPane: ActionPane(
-                    motion:
-                        const DrawerMotion(), // Use DrawerMotion or another motion
-                    children: [
-                      // Define actions like deleting
-                      SlidableAction(
-                        onPressed: (BuildContext context) {
-                          setState(() => messages.removeAt(index));
-                        },
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        icon: Icons.delete,
-                        label: 'Delete',
+                    return Slidable(
+                      // Specify the action pane for the slidable
+                      startActionPane: ActionPane(
+                        motion:
+                            const DrawerMotion(), // Use DrawerMotion or another motion
+                        children: [
+                          // Define actions like deleting
+                          SlidableAction(
+                            onPressed: (BuildContext context) {
+                              setState(() => messages.removeAt(index));
+                            },
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete,
+                            label: 'Delete',
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: const Icon(Icons.person),
-                    ),
-                    title: Text(keyValuePairs[index]['username']!),
-                    subtitle: Text(
-                      keyValuePairs[index]['jid']!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    isThreeLine: true,
-                    onTap: () async {
-                      await connect();
-                      Get.to(() => ChatPage(
-                            flutterXmpp: flutterXmpp,
-                            from: widget.u,
-                            to: keyValuePairs[index]['jid']!,
-                            host: _hostController.text,
-                          ));
-                    },
-                  ),
-                );
-              },
-            )
-          : const Center(
-              child: Column(
-                children: [
-                  Icon(Icons.person_outline),
-                  Text('No Rosters'),
-                ],
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: const Icon(Icons.person),
+                        ),
+                        title: Text(keyValuePairs[index]['username'] ?? ""),
+                        subtitle: Text(keyValuePairs[index]['nickname'] ??
+                            'Unnamed Contact'),
+                        isThreeLine: true,
+                        onTap: () async {
+                          Get.to(() => ChatPage(
+                                flutterXmpp: flutterXmpp,
+                                from: widget.u,
+                                to: keyValuePairs[index]['jid']!,
+                                host: _hostController.text,
+                              ));
+                        },
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              const Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.person_outline),
+                    Text("Not Contact"),
+                  ],
+                ),
               ),
-            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -347,10 +358,21 @@ class _InboxPageState extends State<InboxPage>
   @override
   void onConnectionEvents(ConnectionEvent connectionEvent) async {
     log('onConnectionEvents ~~>>${connectionEvent.toJson()}');
-    connectionStatus = connectionEvent.type!.toConnectionName();
-    connectionStatusMessage = connectionEvent.error ?? '';
-    myRosters = await flutterXmpp.getMyRosters();
-    // one week before
+
+    // Update connection status and message
+    setState(() {
+      connectionStatus = connectionEvent.type!.toConnectionName();
+      connectionStatusMessage = connectionEvent.error ?? '';
+    });
+
+    // Fetch roster if the connection is authenticated
+    if (connectionStatus == "Authenticated") {
+      try {
+        await fetchRoester();
+      } catch (e) {
+        log('Error fetching roster: $e');
+      }
+    }
   }
 
   Future<void> disconnectXMPP() async => await flutterXmpp.logout();
@@ -451,13 +473,6 @@ class _InboxPageState extends State<InboxPage>
 
     return keyValuePairs;
   }
-
-// TextEditingController _userNameController =
-//     TextEditingController(text: "+255788811189");
-// TextEditingController _passwordController =
-//     TextEditingController(text: "1234");
-// TextEditingController _hostController =
-//     TextEditingController(text: "192.168.1.181");
 
   List<CustomElement> customElements = [
     CustomElement(

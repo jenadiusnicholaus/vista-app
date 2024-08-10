@@ -54,6 +54,9 @@ class Environment {
   String FCM_TOKEN_URL = "fcm/fcm-token/";
   String SEND_NOTIFICATION = "fcm/send-notification/";
 
+  // ejabberd api
+  String MY_ROSTER = "ejabberd/my-rosters/";
+
   String get getBaseUrl {
     switch (environmentType) {
       case EnvironmentType.staging:

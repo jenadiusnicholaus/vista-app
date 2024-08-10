@@ -9,6 +9,7 @@ import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/features/auth/phone_number/bloc/phone_number_auth_bloc.dart';
 import 'package:vista/features/auth/user_profile/repository.dart';
 import 'package:vista/features/home_pages/propert_details/repository.dart';
+import 'package:vista/features/host_guest_chat/my_rosters/bloc/my_rosters_bloc.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
 import 'package:vista/features/search/search_property.dart';
@@ -27,7 +28,7 @@ import 'features/booking_system/all_booking_requests/repository.dart';
 import 'features/booking_system/bloc/booking_bloc.dart';
 import 'features/booking_system/confirm_booking/bloc/confirm_booking_bloc.dart';
 import 'features/booking_system/repository.dart';
-import 'features/host_guest_chat/connection/bloc/xmppconnection_bloc.dart';
+import 'features/host_guest_chat/repository.dart';
 import 'features/location/device_current_location.dart';
 import 'features/my_fav_property/bloc/my_fav_properies_bloc.dart';
 import 'features/my_fav_property/repository.dart';
@@ -135,6 +136,12 @@ class _MyAppState extends State<MyApp> {
           RepositoryProvider<RentingRepository>(
               create: (context) => RentingRepository(
                   apiCall: DioApiCall(), environment: Environment.instance)),
+
+          // EjabberdApiRepository
+
+          RepositoryProvider<EjabberdApiRepository>(
+              create: (context) => EjabberdApiRepository(
+                  apiCall: DioApiCall(), environment: Environment.instance)),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -152,10 +159,7 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => ActivateAccountBloc(
                     activateAccountRepository:
                         context.read<ActivateAccountRepository>())),
-            BlocProvider<EmailLoginBloc>(
-                create: (context) => EmailLoginBloc(
-                    emailLoginRepository:
-                        context.read<EmailLoginRepository>())),
+
             BlocProvider<ForgetPasswordBloc>(
                 create: (context) => ForgetPasswordBloc(
                     forgetPasswordRepository:
@@ -189,6 +193,13 @@ class _MyAppState extends State<MyApp> {
 
             // BookingBloc
 
+            BlocProvider<EmailLoginBloc>(
+                create: (context) => EmailLoginBloc(
+                      emailLoginRepository:
+                          context.read<EmailLoginRepository>(),
+                      userProfileBloc: context.read<UserProfileBloc>(),
+                    )),
+
             BlocProvider<BookingBloc>(
               create: (context) => BookingBloc(
                 guestBookingRepository: context.read<GuestBookingRepository>(),
@@ -221,9 +232,10 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
 
-// XmppconnectionBloc
-            BlocProvider<XmppconnectionBloc>(
-              create: (context) => XmppconnectionBloc(),
+            BlocProvider<MyRostersBloc>(
+              create: (context) => MyRostersBloc(
+                ejabberdApiRepository: context.read<EjabberdApiRepository>(),
+              ),
             ),
           ],
           child: ScreenUtilInit(

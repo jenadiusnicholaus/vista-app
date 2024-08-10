@@ -6,10 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
-
 import 'package:vista/features/auth/email_login/email_login.dart';
-
-import '../../host_guest_chat/connection/bloc/xmppconnection_bloc.dart';
 import 'bloc/phone_number_auth_bloc.dart';
 
 class PhoneNumnerLogin extends StatefulWidget {
@@ -21,7 +18,7 @@ class PhoneNumnerLogin extends StatefulWidget {
 
 class _LoginPageState extends State<PhoneNumnerLogin> {
   final _formKey = GlobalKey<FormState>();
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   var _completePhoneNumber = "";
   final _phoneNumberController = TextEditingController();
 

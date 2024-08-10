@@ -50,6 +50,7 @@ class FcmRepository {
     required String token,
     required senderId,
     required dynamic senderTimeStamp,
+    required dynamic toUserid,
   }) async {
     var response = await apiCall.post(
       "${environment.getBaseUrl}${environment.SEND_NOTIFICATION}",
@@ -57,7 +58,8 @@ class FcmRepository {
         "title": title,
         "body": body,
         "device_registration_token": token,
-        "data": {"username": "$senderId", "timestamp": "$senderTimeStamp"}
+        "data": {"username": "$senderId", "timestamp": "$senderTimeStamp"},
+        "to_user": toUserid,
       },
     );
     if (response.statusCode == 200) {
