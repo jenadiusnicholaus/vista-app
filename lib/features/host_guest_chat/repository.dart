@@ -27,4 +27,43 @@ class EjabberdApiRepository {
       throw Exception('Failed to load Rosters');
     }
   }
+
+  //addd roster
+  // {
+  //     "localuser": "+255744315516",
+  //     "localhost": "192.168.1.181",
+  //     "user": "+255788822282",
+  //     "host": "192.168.1.181",
+  //     "nick": "My Host",
+  //     "groups": [],
+  //     "subs": ""
+  //   };
+
+  Future<void> addRoster({
+    required String localuser,
+    required String localhost,
+    required String user,
+    required String host,
+    required String nick,
+    List<String>? groups,
+    String? subs,
+  }) async {
+    var data = {
+      "localuser": localuser,
+      "localhost": localhost,
+      "user": user,
+      "host": host,
+      "nick": nick,
+      "groups": [],
+      "subs": 'both'
+    };
+    var response = await apiCall
+        .post(environment.getBaseUrl + environment.ADD_ROSTER, data: data);
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      throw Exception('Failed to add Roster');
+    }
+  }
 }

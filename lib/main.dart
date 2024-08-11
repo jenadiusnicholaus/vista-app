@@ -9,6 +9,7 @@ import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/features/auth/phone_number/bloc/phone_number_auth_bloc.dart';
 import 'package:vista/features/auth/user_profile/repository.dart';
 import 'package:vista/features/home_pages/propert_details/repository.dart';
+import 'package:vista/features/host_guest_chat/my_rosters/bloc/add_roster_bloc.dart';
 import 'package:vista/features/host_guest_chat/my_rosters/bloc/my_rosters_bloc.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/email_login.dart';
@@ -234,6 +235,12 @@ class _MyAppState extends State<MyApp> {
 
             BlocProvider<MyRostersBloc>(
               create: (context) => MyRostersBloc(
+                ejabberdApiRepository: context.read<EjabberdApiRepository>(),
+              ),
+            ),
+
+            BlocProvider<AddRosterBloc>(
+              create: (context) => AddRosterBloc(
                 ejabberdApiRepository: context.read<EjabberdApiRepository>(),
               ),
             ),

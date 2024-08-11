@@ -56,6 +56,7 @@ class Environment {
 
   // ejabberd api
   String MY_ROSTER = "ejabberd/my-rosters/";
+  String ADD_ROSTER = "ejabberd/add-roster/";
 
   String get getBaseUrl {
     switch (environmentType) {

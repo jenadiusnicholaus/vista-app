@@ -36,36 +36,16 @@ class InboxPage extends StatefulWidget {
 class _InboxPageState extends State<InboxPage>
     with WidgetsBindingObserver
     implements DataChangeEvents {
-  // final TextEditingController _userNameController = TextEditingController();
-  // final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _hostController =
       TextEditingController(text: "192.168.1.181");
-
-  TextEditingController _createMUCNamecontroller = TextEditingController();
-
-  TextEditingController _toReceiptController = TextEditingController();
-  TextEditingController _msgIdController = TextEditingController();
-  final TextEditingController _userJidController = TextEditingController(
-    text: "+255788811189",
-  );
   final TextEditingController _createRostersController =
       TextEditingController();
-  final TextEditingController _receiptIdController = TextEditingController();
-  final TextEditingController _joinMUCTextController = TextEditingController();
-  final TextEditingController _joinTimeController = TextEditingController();
-  final TextEditingController _messageController = TextEditingController();
-  final TextEditingController _custommessageController =
-      TextEditingController();
-  final TextEditingController _toNameController = TextEditingController();
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   static late XmppConnection flutterXmpp;
   List<MessageChat> events = [];
   List<PresentModel> presentMo = [];
   String connectionStatus = "Disconnected";
   String connectionStatusMessage = "";
-  List<dynamic> _myRosters = [];
   List<dynamic> myMessages = [];
   bool loadingRoster = false;
   @override
@@ -90,25 +70,6 @@ class _InboxPageState extends State<InboxPage>
   Future<void> fetchRoester() async {
     BlocProvider.of<MyRostersBloc>(context).add(GetMyRosters(
         username: widget.u, host: _hostController.text.trimRight()));
-    // setState(() {
-    //   loadingRoster = true;
-    // });
-    // try {
-    //   var rosters = await flutterXmpp.getMyRosters();
-    //   setState(() {
-    //     myRosters = rosters.map((e) => e).toList();
-    //   });
-    //   if (rosters != null) {
-    //     setState(() {
-    //       loadingRoster = false;
-    //     });
-    //   }
-    // } catch (e) {
-    //   setState(() {
-    //     loadingRoster = false;
-    //   });
-    //   log('Error fetching rosters: $e');
-    // }
   }
 
   Future<void> connect() async {
@@ -199,54 +160,10 @@ class _InboxPageState extends State<InboxPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inbox'),
-        actions: [
-          // refresh connection btn
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              connect();
-            },
-          ),
-          // get roster
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Create Roster'),
-                    content: TextField(
-                      controller: _createRostersController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter JID',
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          createRoster();
-
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Create'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-
-        //
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // if (loadingRoster)
-            //   const Center(child: CircularProgressIndicator())
-            // else if (transformRoster(myRosters.toString()).isNotEmpty)
             BlocBuilder<MyRostersBloc, MyRostersState>(
                 builder: (context, state) {
               if (state is MyRostersLoading) {
@@ -266,6 +183,24 @@ class _InboxPageState extends State<InboxPage>
 
               if (state is MyRostersLoaded) {
                 final myRosters = state.myRosters;
+
+                if (myRosters.length == 0) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person_outline),
+                          Text(
+                            "Not Contact",
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
                 return SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: ListView.builder(
@@ -299,7 +234,7 @@ class _InboxPageState extends State<InboxPage>
                           ],
                         ),
                         child: ListTile(
-                          leading: buidAvatar(myRoster.userProfilePic),
+                          leading: buildAvatar(myRoster.userProfilePic),
                           title: Text(myRoster.firstName.toString()),
                           subtitle: Text(myRoster.email.toString()),
                           isThreeLine: true,
@@ -311,7 +246,7 @@ class _InboxPageState extends State<InboxPage>
                                   host: _hostController.text,
                                   toName: myRoster.firstName.toString(),
                                   toEmail: myRoster.email.toString(),
-                                  toImage: myRoster.userProfilePic.toString(),
+                                  toImage: myRoster.userProfilePic,
                                 ));
                           },
                         ),

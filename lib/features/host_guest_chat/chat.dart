@@ -31,7 +31,7 @@ class ChatPage extends StatefulWidget {
   final String to;
   final String host;
   final String toName;
-  final String toImage;
+  final String? toImage;
   final String toEmail;
 
 // Accept initial messages
@@ -101,7 +101,6 @@ class _ChatPageState extends State<ChatPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     log(connectionStatus);
-
     _smsTextController.addListener(() {
       if (_smsTextController.text.isNotEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -129,7 +128,7 @@ class _ChatPageState extends State<ChatPage>
   }
 
   Future<void> requestMamMessages() async {
-    String userJid = "${widget.to}@${widget.host}";
+    String userJid = widget.to;
     DateTime since = DateTime.now().subtract(const Duration(days: 30));
     // before now
     DateTime before = DateTime.now();
@@ -161,10 +160,8 @@ class _ChatPageState extends State<ChatPage>
       await widget.flutterXmpp.sendMessageWithType(
           widget.to, text, "$id", DateTime.now().millisecondsSinceEpoch);
       _smsTextController.clear();
-      // requestMamMessages();
       changePresenceType(presenceTypeItems[0], presenceModeitems[0]);
       _changeTypingStatus(widget.to, 'active');
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
@@ -205,7 +202,7 @@ class _ChatPageState extends State<ChatPage>
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: buidAvatar(widget.toImage),
+          child: buildAvatar(widget.toImage),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +212,6 @@ class _ChatPageState extends State<ChatPage>
                 Text(widget.toName, style: const TextStyle(fontSize: 16.0)),
               ],
             ),
-            // typing status
             Row(
               children: [
                 Text(
@@ -266,6 +262,12 @@ class _ChatPageState extends State<ChatPage>
                         scrollController: _scrollController,
                         decoration: InputDecoration(
                           hintText: 'Type a message',
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(100.0),
                             borderSide: const BorderSide(
@@ -354,22 +356,13 @@ class _ChatPageState extends State<ChatPage>
                     ),
                   ),
                   bottomActionBarConfig: const BottomActionBarConfig(
-                    backgroundColor: Colors.white,
-                    buttonColor: Colors.white,
-                    buttonIconColor: secondaryColor,
-                  ),
+                      backgroundColor: Colors.white,
+                      buttonColor: Colors.white,
+                      buttonIconColor: secondaryColor),
                   searchViewConfig: SearchViewConfig(
                     backgroundColor: Colors.white,
-                    customSearchView: (
-                      config,
-                      state,
-                      showEmojiView,
-                    ) {
-                      return WhatsAppSearchView(
-                        config,
-                        state,
-                        showEmojiView,
-                      );
+                    customSearchView: (config, state, showEmojiView) {
+                      return WhatsAppSearchView(config, state, showEmojiView);
                     },
                   ),
                 ),
@@ -379,6 +372,24 @@ class _ChatPageState extends State<ChatPage>
         ),
       ),
     );
+  }
+
+  void sendReceipt(messagesId, senderJid) async {
+    int id = DateTime.now().millisecondsSinceEpoch;
+    await widget.flutterXmpp
+        .sendDelieveryReceipt(senderJid, messagesId.toString(), id.toString());
+  }
+
+  void onMessageReceived(MessageChat message) {
+    String currentUserJid = "${widget.from}@${widget.host}";
+
+    if (message.from == currentUserJid) {
+      print("This message is from Me.");
+      // Handle message as sent by Me
+    } else {
+      print("This message is from someone else.");
+      // Handle message as received from someone else
+    }
   }
 
   DateTime parseTimestamp(String timestamp) {
@@ -399,6 +410,7 @@ class _ChatPageState extends State<ChatPage>
   void onChatMessage(MessageChat messageChat) {
     if (messageChat.body != null && messageChat.body!.isNotEmpty) {
       events.add(messageChat);
+      sendReceipt(messageChat.id, messageChat.senderJid);
       _scrollToBottom();
       setState(() {});
     }
@@ -420,6 +432,8 @@ class _ChatPageState extends State<ChatPage>
     log('from-mmsksksk: $from');
     log('tom-m-msslsls: $to');
     log('chat state: ${messageChat.chatStateType.toString()}');
+
+    onMessageReceived(messageChat);
 
     if (from == to) {
       setState(() {
@@ -516,7 +530,7 @@ class ChatScreen extends StatelessWidget {
       floatingHeader: true, // optional
 
       padding:
-          const EdgeInsets.only(bottom: 60.0, right: 20, left: 20, top: 20),
+          const EdgeInsets.only(bottom: 10.0, right: 20, left: 10, top: 10),
 
       groupSeparatorBuilder: (String value) {
         DateTime dateTime = DateTime.parse(value);
@@ -551,35 +565,36 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
+  bool handleIsMe(String from, String eventFrom) {
+    bool isMe = from == eventFrom;
+    return isMe;
+  }
+
+  double calculateWidth(String text) {
+    int length = text.length;
+    if (length <= 20) {
+      return 120.0;
+    } else if (length <= 40) {
+      return 200.0;
+    } else {
+      return 300.0;
+    }
+  }
+
   Widget _buildMessage(BuildContext context, MessageChat event) {
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(int.parse(event.time!));
     String formattedTime =
         DateFormat('hh:mm a').format(dateTime); // Format time as 'hh:mm AM/PM'
 
-    final isMe = event.from!.split('@')[0] == from;
-    log('from: $from');
-    log('event.from: ${event.from!.split('@')[0]}');
-    log('to: $to');
-    log('isMe: $isMe');
+    final isMe = handleIsMe(from, event.from!.split('@')[0]);
+
 //
     final theme = Theme.of(context);
     final isDarkTheme = theme.brightness == Brightness.dark;
 
-    // Calculate the width dynamically based on the length of the event body
-    double calculateWidth(String text) {
-      int length = text.length;
-      if (length <= 20) {
-        return 120.0;
-      } else if (length <= 40) {
-        return 200.0;
-      } else {
-        return 300.0;
-      }
-    }
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
       child: Align(
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(

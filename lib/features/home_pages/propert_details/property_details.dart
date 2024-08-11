@@ -9,6 +9,7 @@ import '../../../shared/utils/custom_spinkit_loaders.dart';
 import '../../../shared/utils/present_money_format.dart';
 import '../../../shared/widgets/error_snack_bar.dart';
 import '../../Buying_system/Buying_page.dart';
+import '../../auth/user_profile/host_profile.dart';
 import '../../booking_system/booking_page.dart';
 import '../../renting_system/renting_page.dart';
 import '../category/bloc/property_category_bloc.dart';
@@ -211,58 +212,63 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 3.h),
       child: ListTile(
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundImage: widget.property.host?.user?.userProfilePic != null
-              ? NetworkImage(widget.property.host?.user?.userProfilePic)
-              : const AssetImage('assets/images/placeholder_for_profile.jpeg')
-                  as ImageProvider,
-        ),
-        title: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
-                  style: Theme.of(context).textTheme.titleSmall),
-              Row(
-                children: [
-                  Icon(
-                      widget.property.host!.isVerified!
-                          ? Icons.verified
-                          : Icons.cancel_outlined,
-                      color: widget.property.host!.isVerified!
-                          ? Colors.green
-                          : Colors.red,
-                      size: 30),
-                  Text(
-                      widget.property.host!.isVerified!
-                          ? "Verified"
-                          : "Not Verified",
-                      style: TextStyle(
+          leading: CircleAvatar(
+            radius: 30,
+            backgroundImage: widget.property.host?.user?.userProfilePic != null
+                ? NetworkImage(widget.property.host?.user?.userProfilePic)
+                : const AssetImage('assets/images/placeholder_for_profile.jpeg')
+                    as ImageProvider,
+          ),
+          title: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    "Hosted By - ${widget.property.host?.user?.firstName ?? ''}",
+                    style: Theme.of(context).textTheme.titleSmall),
+                Row(
+                  children: [
+                    Icon(
+                        widget.property.host!.isVerified!
+                            ? Icons.verified
+                            : Icons.cancel_outlined,
                         color: widget.property.host!.isVerified!
                             ? Colors.green
                             : Colors.red,
-                      )),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(calculateDurationOnVista(),
-                        style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(width: 10),
-                    Text(".", style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(width: 10),
-                    const SizedBox(width: 10),
+                        size: 30),
+                    Text(
+                        widget.property.host!.isVerified!
+                            ? "Verified"
+                            : "Not Verified",
+                        style: TextStyle(
+                          color: widget.property.host!.isVerified!
+                              ? Colors.green
+                              : Colors.red,
+                        )),
                   ],
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Text(calculateDurationOnVista(),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(width: 10),
+                      Text(".", style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(width: 10),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+          trailing: TextButton(
+              onPressed: () {
+                Get.to(() => HostProfilePage(user: widget.property.host?.user));
+              },
+              child: const Icon(Icons.sms_outlined))),
     );
   }
 
@@ -287,37 +293,26 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                   const SizedBox(height: 10),
                   Text("What the property offers",
                       style: Theme.of(context).textTheme.titleMedium),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: state.propertyDetailsModel.facilities!.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            leading: const Icon(
-                              Icons.check_circle_outline,
-                              size: 35,
-                            ),
-                            contentPadding:
-                                EdgeInsets.only(left: 6.w, right: 6.w),
-                            title: Text(
-                                state.propertyDetailsModel.facilities![index]
-                                        .facility ??
-                                    '',
-                                style: Theme.of(context).textTheme.titleSmall),
-                            subtitle: Text(
-                                state.propertyDetailsModel.facilities![index]
-                                        .description ??
-                                    '',
-                                style: Theme.of(context).textTheme.caption),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                  Column(
+                    children: state.propertyDetailsModel.facilities
+                        .map<Widget>((element) => ListTile(
+                              leading: const Icon(
+                                Icons.check_circle_outline,
+                                size: 35,
+                              ),
+                              contentPadding:
+                                  EdgeInsets.only(left: 6.w, right: 6.w),
+                              title: Text(
+                                element.facility ?? '',
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              subtitle: Text(
+                                element.description ?? '',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                            ))
+                        .toList(), // Ensure the result is a List<Widget>
+                  )
                 ],
               ),
           ],
@@ -343,41 +338,37 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
             const SizedBox(height: 10),
             Text("Extra services",
                 style: Theme.of(context).textTheme.titleMedium),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: state.propertyDetailsModel.amenities!.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(
-                        state.propertyDetailsModel.amenities![index]
-                                    .isAvailable ??
-                                false
-                            ? Icons.check_circle_outline
-                            : Icons.verified,
-                        size: 35,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 6.w, right: 6.w),
-                      title: Text(
-                          state.propertyDetailsModel.amenities![index].name ??
-                              '',
-                          style: Theme.of(context).textTheme.titleSmall),
-                      subtitle: Text(
-                          state.propertyDetailsModel.amenities![index]
-                                  .description ??
-                              '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.caption),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                );
-              },
-            ),
+            Column(
+              children: state.propertyDetailsModel.amenities!
+                  .map<Widget>((amenity) => Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              amenity.isAvailable ?? false
+                                  ? Icons.check_circle_outline
+                                  : Icons.verified,
+                              size: 35,
+                            ),
+                            contentPadding:
+                                EdgeInsets.only(left: 6.w, right: 6.w),
+                            title: Text(
+                              amenity.name ?? '',
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                            subtitle: Text(
+                              amenity.description ?? '',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ))
+                  .toList(),
+            )
           ],
         ),
     ]));
