@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:vista/shared/environment.dart';
 import 'package:vista/shared/utils/local_storage.dart';
-
-import '../../features/fcm/firebase_push_notification.dart';
 import '../api_call/api.dart';
 import '../token_handler.dart';
 import 'repository.dart';
@@ -41,7 +39,9 @@ class TokensInterceptors extends Interceptor {
     ];
     if (refreshToken == null || isRefreshTokenExpired) {
       ignoreSubUrls.add("property/");
-    } else {}
+    } else {
+      
+    }
 
     Uri uri = options.uri;
     // Normalize the base URL if necessary, e.g., removing query parameters or fragments

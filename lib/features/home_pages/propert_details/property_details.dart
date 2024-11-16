@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -93,49 +94,51 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 225.0, // Adjust height as needed
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: state.propertyDetailsModel.images!.length,
-            itemBuilder: (context, index) {
-              return Stack(
-                children: [
-                  Image.network(
-                    state.propertyDetailsModel.images![index].image!,
-                    fit: BoxFit.cover,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Text('Error loading image');
-                    },
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    right: 20,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        "${index + 1} / ${state.propertyDetailsModel.images!.length}", // Adjust index to start from 1
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
+        CarouselSlider.builder(
+          itemCount: state.propertyDetailsModel.images!.length,
+          itemBuilder: (context, index, realIndex) {
+            return Stack(
+              children: [
+                Image.network(
+                  state.propertyDetailsModel.images![index].image!,
+                  fit: BoxFit.cover,
+                  width: MediaQuery.of(context).size.width,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Text('Error loading image');
+                  },
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "${index + 1} / ${state.propertyDetailsModel.images!.length}", // Adjust index to start from 1
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
-                  )
-                ],
-              );
-            },
+                  ),
+                )
+              ],
+            );
+          },
+          options: CarouselOptions(
+            height: 190.h,
+            viewportFraction: 1,
+            enlargeCenterPage: true,
+            enableInfiniteScroll: false,
+            autoPlay: true,
           ),
         ),
       ],

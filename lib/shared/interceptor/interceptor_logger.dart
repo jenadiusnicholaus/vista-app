@@ -19,7 +19,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
+  void onResponse(dynamic response, ResponseInterceptorHandler handler) {
     log('Response from ${response.requestOptions.method} ${response.requestOptions.uri}: ${response.statusCode}');
     log('Response data: ${response.data}');
     log('Response headers: ${response.headers}');
@@ -41,6 +41,9 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    // LocalStorage.deleteAll();
+    // Get.offAndToNamed('/login');
+
     log('Error in ${err.requestOptions.method} ${err.requestOptions.uri}: ${err.message}');
     log('Error response: ${err.response}');
     log('Error response data: ${err.response?.data}');

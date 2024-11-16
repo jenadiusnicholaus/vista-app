@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
-import 'package:vista/features/host_guest_chat/chat.dart';
 import 'package:vista/features/host_guest_chat/inbox.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 
@@ -14,10 +13,6 @@ class AddRosterBloc extends Bloc<AddRosterEvent, AddRosterState> {
   final EjabberdApiRepository ejabberdApiRepository;
   AddRosterBloc({required this.ejabberdApiRepository})
       : super(AddRosterInitial()) {
-    on<AddRosterEvent>((event, emit) {
-      // TODO: implement event handler
-    });
-
     on<AddRoster>((event, emit) async {
       emit(AddRosterLoading());
       try {

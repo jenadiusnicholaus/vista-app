@@ -1,4 +1,4 @@
-import 'package:vista/features/fcm/model.dart';
+import 'package:vista/shared/models.dart';
 
 class PropertListModel {
   int? count;
@@ -59,7 +59,7 @@ class Results {
   String? contractDraft;
   BORpolicy? bORpolicy;
   List<Prrs>? prrs;
-  List<Rdos>? rdos; 
+  List<Rdos>? rdos;
 
   Results(
       {this.id,
@@ -172,152 +172,6 @@ class Results {
     if (rdos != null) {
       data['rdos'] = rdos!.map((v) => v.toJson()).toList();
     }
-    return data;
-  }
-}
-
-class Category {
-  int? id;
-  String? name;
-  dynamic icon;
-  String? description;
-  String? createdAt;
-  bool? published;
-  String? updatedAt;
-
-  Category(
-      {this.id,
-      this.name,
-      this.icon,
-      this.description,
-      this.createdAt,
-      this.published,
-      this.updatedAt});
-
-  Category.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    icon = json['icon'];
-    description = json['description'];
-    createdAt = json['created_at'];
-    published = json['published'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = id;
-    data['name'] = name;
-    data['icon'] = icon;
-    data['description'] = description;
-    data['created_at'] = createdAt;
-    data['published'] = published;
-    data['updated_at'] = updatedAt;
-    return data;
-  }
-}
-
-class Host {
-  int? id;
-  User? user;
-  int? propertyCount;
-  bool? isVerified;
-  String? createdAt;
-  String? updatedAt;
-  FcmTokenModel? fcmtoken;
-
-  Host(
-      {this.id,
-      this.user,
-      this.propertyCount,
-      this.isVerified,
-      this.createdAt,
-      this.updatedAt,
-      this.fcmtoken});
-
-  Host.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
-    fcmtoken = json['fcmtoken'] != null
-        ? FcmTokenModel.fromJson(json['fcmtoken'])
-        : null;
-    propertyCount = json['property_count'];
-    isVerified = json['is_verified'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = id;
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
-
-    if (fcmtoken != null) {
-      data['fcmtoken'] = fcmtoken!.toJson();
-    }
-    data['property_count'] = propertyCount;
-    data['is_verified'] = isVerified;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    return data;
-  }
-}
-
-class User {
-  int? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? phoneNumber;
-  String? dateOfBirth;
-  bool? isActive;
-  bool? phoneIsVerified;
-  dynamic lastLogin;
-  String? dateJoined;
-  String? userProfilePic;
-
-  User(
-      {this.id,
-      this.email,
-      this.firstName,
-      this.lastName,
-      this.phoneNumber,
-      this.dateOfBirth,
-      this.isActive,
-      this.phoneIsVerified,
-      this.lastLogin,
-      this.dateJoined,
-      this.userProfilePic});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    phoneNumber = json['phone_number'];
-    dateOfBirth = json['date_of_birth'];
-    isActive = json['is_active'];
-    phoneIsVerified = json['phone_is_verified'];
-    lastLogin = json['last_login'];
-    dateJoined = json['date_joined'];
-    userProfilePic = json['user_profile_pic'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = id;
-    data['email'] = email;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    data['phone_number'] = phoneNumber;
-    data['date_of_birth'] = dateOfBirth;
-    data['is_active'] = isActive;
-    data['phone_is_verified'] = phoneIsVerified;
-    data['last_login'] = lastLogin;
-    data['date_joined'] = dateJoined;
-    data['user_profile_pic'] = userProfilePic;
     return data;
   }
 }

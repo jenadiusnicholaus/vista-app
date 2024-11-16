@@ -8,7 +8,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:vista/data/sample_data.dart';
+//
 import 'package:vista/features/home_pages/explore/models.dart'
     as explore_models;
 import 'package:vista/features/home_pages/explore/repository.dart';
@@ -24,7 +24,6 @@ import '../../../shared/error_handler.dart';
 import '../../../shared/utils/present_image.dart';
 import '../category/models.dart';
 import '../propert_details/property_details.dart'; // Import intl package at the top of your Dart file
-// import '../property_details.dart' as property_details;
 
 class ExplorePage extends StatefulWidget {
   final List<CResults> categories;
@@ -37,7 +36,6 @@ class ExplorePage extends StatefulWidget {
 class _ExplorePageState extends State<ExplorePage>
     with SingleTickerProviderStateMixin {
   // List<CResults>? categories;
-  final List<Property> properties = sampleProperties;
   late TabController _tabController;
 
   bool isLoadingCategory = false;
@@ -59,7 +57,9 @@ class _ExplorePageState extends State<ExplorePage>
         _fetchPage(pageKey);
       });
     });
-    selectedCategory = widget.categories[0].id.toString();
+    if (widget.categories.isNotEmpty) {
+      selectedCategory = widget.categories[0].id.toString();
+    }
     _tabController =
         TabController(length: widget.categories.length, vsync: this);
 
@@ -87,7 +87,6 @@ class _ExplorePageState extends State<ExplorePage>
             widget.categories[_tabController.index].id.toString();
         _propertiesPagingController.itemList?.clear();
         _propertiesPagingController.refresh();
-        // _fetchPage(1);
       });
     });
   }
@@ -138,39 +137,25 @@ class _ExplorePageState extends State<ExplorePage>
 
   @override
   Widget build(BuildContext context) {
-    // _tabController = TabController(
-    //     length: categoryController.categories.length, vsync: this);
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
             elevation: 0,
-            title: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    90.0.r), // Use ScreenUtil for responsive radius
-              ),
-              child: GestureDetector(
-                  onTap: () async {
-                    await showSearch(
-                      context: context,
-                      delegate: PropertySearchDelegate(
-                        pagingController: _propertiesPagingController,
-                      ),
-                    );
-                    // Get.toNamed('/search');
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(Icons.search_outlined, color: Colors.grey),
-                      Text('Search',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          )),
-                    ],
-                  )),
-            ),
+            title: GestureDetector(
+                onTap: () async {
+                  Get.toNamed('/search');
+                },
+                child: const Row(
+                  children: [
+                    Icon(Icons.search_outlined, color: Colors.grey),
+                    Text(
+                      'Where are to?',
+                    ),
+                  ],
+                )),
+            centerTitle: true,
+            titleTextStyle: const TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
             leading: IconButton(
               icon: const Icon(Icons.menu, color: Colors.grey),
               onPressed: () {},
@@ -194,7 +179,6 @@ class _ExplorePageState extends State<ExplorePage>
               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10.h),
               tabs: [
                 ...widget.categories.map((category) {
-                  // log('Category cay wed: ${category.name}');
                   return Tab(
                     child: Text(
                       category.name ?? '',
@@ -204,7 +188,7 @@ class _ExplorePageState extends State<ExplorePage>
                       ),
                     ),
                   );
-                }).toList()
+                })
               ],
             ),
           ),
@@ -228,8 +212,6 @@ class _ExplorePageState extends State<ExplorePage>
               ),
             ),
           )),
-
-      //    RefreshIndicator(
     );
   }
 }

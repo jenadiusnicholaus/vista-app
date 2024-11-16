@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +17,6 @@ import 'package:xmpp_plugin/models/message_model.dart';
 import 'package:xmpp_plugin/models/present_mode.dart';
 import 'package:xmpp_plugin/success_response_event.dart';
 import 'package:xmpp_plugin/xmpp_plugin.dart';
-import '../../data/sample_data.dart';
 import '../../shared/native_log_helper.dart';
 import '../../shared/utils/build_avatar.dart';
 import 'chat.dart';
@@ -37,7 +35,7 @@ class _InboxPageState extends State<InboxPage>
     with WidgetsBindingObserver
     implements DataChangeEvents {
   final TextEditingController _hostController =
-      TextEditingController(text: "192.168.1.181");
+      TextEditingController(text: "192.168.1.182");
   final TextEditingController _createRostersController =
       TextEditingController();
 
@@ -50,21 +48,17 @@ class _InboxPageState extends State<InboxPage>
   bool loadingRoster = false;
   @override
   void initState() {
-    log(widget.u);
-    log(widget.v);
-
     checkStoragePermission();
     XmppConnection.addListener(this);
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
-    log(connectionStatus);
     connect();
-
     if (connectionStatus == 'Authenticated') {
     } else if (connectionStatus == 'Disconnected') {
       connect();
       fetchRoester();
     }
+
+    super.initState();
   }
 
   Future<void> fetchRoester() async {
@@ -85,7 +79,6 @@ class _InboxPageState extends State<InboxPage>
       "password": widget.v.trimRight(),
       "host": _hostController.text,
       "port": '5222',
-      // "serviceName": "ws://${_hostController.text}:5280/websocket/",
       "nativeLogFilePath": NativeLogHelper.logFilePath,
       "requireSSLConnection": false, // Set to true if SSL is required
       "autoDeliveryReceipt": true, // Enable if you need delivery receipts
@@ -206,26 +199,14 @@ class _InboxPageState extends State<InboxPage>
                   child: ListView.builder(
                     itemCount: myRosters.length,
                     itemBuilder: (context, index) {
-                      // final message = messages[index];
-
-                      // final keyValuePairs =
-                      //     transformRoster(myRosters.toString());
-
-                      // log(keyValuePairs);
-
                       UserProfileModel myRoster = myRosters[index];
 
                       return Slidable(
-                        // Specify the action pane for the slidable
                         startActionPane: ActionPane(
-                          motion:
-                              const DrawerMotion(), // Use DrawerMotion or another motion
+                          motion: const DrawerMotion(),
                           children: [
-                            // Define actions like deleting
                             SlidableAction(
-                              onPressed: (BuildContext context) {
-                                setState(() => messages.removeAt(index));
-                              },
+                              onPressed: (BuildContext context) {},
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
@@ -239,6 +220,8 @@ class _InboxPageState extends State<InboxPage>
                           subtitle: Text(myRoster.email.toString()),
                           isThreeLine: true,
                           onTap: () async {
+                            log('${myRoster.phoneNumber}');
+                            log('${widget.u}');
                             Get.to(() => ChatPage(
                                   flutterXmpp: flutterXmpp,
                                   from: widget.u,
@@ -257,16 +240,6 @@ class _InboxPageState extends State<InboxPage>
               }
               return Text('');
             })
-
-            // else
-            //   const Center(
-            //     child: Column(
-            //       children: [
-            //         Icon(Icons.person_outline),
-            //         Text("Not Contact"),
-            //       ],
-            //     ),
-            //   ),
           ],
         ),
       ),

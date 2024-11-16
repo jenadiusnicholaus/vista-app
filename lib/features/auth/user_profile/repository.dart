@@ -1,4 +1,3 @@
-import '../../../data/sample_data.dart';
 import '../../../shared/api_call/api.dart';
 import '../../../shared/environment.dart';
 import 'models.dart';
@@ -23,7 +22,6 @@ class UserProfileRepository {
     }
   }
 
-  Future<void> updateUserProfile(UserProfile userProfile) async {}
 
   Future<dynamic> createMyBankPaymentDetails(
       {required dynamic bankName,

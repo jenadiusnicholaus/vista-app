@@ -9,8 +9,8 @@ class Environment {
   static String API_VERSION = "v1";
   static const String STAGING_BASE_URL = "";
 
-  static const String REMOTE_DEV_BASE_URL =
-      "https://e-shop-api-dev.azurewebsites.net/api/";
+  static String REMOTE_DEV_BASE_URL =
+      "https://vista.nexacon.cloud/api/$API_VERSION/";
   static const String PROD_BASE_URL = "";
   static String LOCAL_DEV_BASE_URL =
       "http://192.168.1.181:8000/api/$API_VERSION/";
@@ -48,7 +48,7 @@ class Environment {
   String PROPERTY_DETAIL = "property/property-details/";
   String PROPERTY_CATEGORIES = "property/categories/";
   String PROPERTY_REVIEW = "property/review-property/";
-  static EnvironmentType environmentType = EnvironmentType.local_dev;
+  String SUPPORTED_GEO_REGIONS = "property/supported-geo-regions/";
 
   // fcm
   String FCM_TOKEN_URL = "fcm/fcm-token/";
@@ -58,6 +58,7 @@ class Environment {
   String MY_ROSTER = "ejabberd/my-rosters/";
   String ADD_ROSTER = "ejabberd/add-roster/";
 
+  static EnvironmentType environmentType = EnvironmentType.remote_dev;
   String get getBaseUrl {
     switch (environmentType) {
       case EnvironmentType.staging:

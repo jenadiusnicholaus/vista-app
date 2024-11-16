@@ -17,7 +17,6 @@ import 'package:xmpp_plugin/models/message_model.dart';
 import 'package:xmpp_plugin/models/present_mode.dart';
 import 'package:xmpp_plugin/success_response_event.dart';
 import 'package:xmpp_plugin/xmpp_plugin.dart';
-import '../../data/sample_data.dart';
 
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:emoji_picker_flutter/src/skin_tones/skin_tone_config.dart';
@@ -53,7 +52,6 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage>
     with WidgetsBindingObserver
     implements DataChangeEvents {
-  List<ChatMessage> messages = []; // Messages list
   final TextEditingController _smsTextController = TextEditingController();
   // Create an instance of XmppPlugin
   List<MessageChat> events = [];
@@ -94,13 +92,10 @@ class _ChatPageState extends State<ChatPage>
 
   @override
   void initState() {
-    super.initState();
-    // send read status
-    requestMamMessages();
     XmppConnection.addListener(this);
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    log(connectionStatus);
+
     _smsTextController.addListener(() {
       if (_smsTextController.text.isNotEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -114,6 +109,8 @@ class _ChatPageState extends State<ChatPage>
       fontFamily: GoogleFonts.notoColorEmoji().fontFamily,
       fontSize: fontSize,
     );
+
+    requestMamMessages();
   }
 
   bool getPresenceForUser(String userJid) {
@@ -132,7 +129,7 @@ class _ChatPageState extends State<ChatPage>
     DateTime since = DateTime.now().subtract(const Duration(days: 30));
     // before now
     DateTime before = DateTime.now();
-    const int limit = 100;
+    const int limit = 10;
     // Convert to timestamps
     int sinceTimestamp = since.millisecondsSinceEpoch;
     int beforeTimestamp = before.millisecondsSinceEpoch;
@@ -147,10 +144,7 @@ class _ChatPageState extends State<ChatPage>
         _scrollToBottom();
       });
     } on SocketException catch (e) {
-      log('SocketException: $e');
-    } catch (e) {
-      log('Error: $e');
-    }
+    } catch (e) {}
   }
 
   void _sendMessage() async {
@@ -160,7 +154,7 @@ class _ChatPageState extends State<ChatPage>
       await widget.flutterXmpp.sendMessageWithType(
           widget.to, text, "$id", DateTime.now().millisecondsSinceEpoch);
       _smsTextController.clear();
-      changePresenceType(presenceTypeItems[0], presenceModeitems[0]);
+      await changePresenceType(presenceTypeItems[0], presenceModeitems[0]);
       _changeTypingStatus(widget.to, 'active');
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
@@ -193,6 +187,18 @@ class _ChatPageState extends State<ChatPage>
 
   Future<void> changePresenceType(presenceType, presenceMode) async {
     await widget.flutterXmpp.changePresenceType(presenceType, presenceMode);
+  }
+
+  Timer? _debounce;
+  void _onTextChanged(String text) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (text.isNotEmpty) {
+        _changeTypingStatus(widget.to, 'composing');
+      } else {
+        _changeTypingStatus(widget.to, "inactive");
+      }
+    });
   }
 
   @override
@@ -250,13 +256,7 @@ class _ChatPageState extends State<ChatPage>
                     child: Padding(
                       padding: const EdgeInsets.only(right: 2),
                       child: CustomTextFormField(
-                        onChanged: (text) {
-                          if (text.isNotEmpty) {
-                            _changeTypingStatus(widget.to, 'composing');
-                          } else {
-                            _changeTypingStatus(widget.to, "inactive");
-                          }
-                        },
+                        onChanged: (text) => _onTextChanged(text),
                         focusNode: _focusNode,
                         controller: _smsTextController,
                         scrollController: _scrollController,
@@ -410,7 +410,7 @@ class _ChatPageState extends State<ChatPage>
   void onChatMessage(MessageChat messageChat) {
     if (messageChat.body != null && messageChat.body!.isNotEmpty) {
       events.add(messageChat);
-      sendReceipt(messageChat.id, messageChat.senderJid);
+      // sendReceipt(messageChat.id, messageChat.senderJid);
       _scrollToBottom();
       setState(() {});
     }
@@ -420,8 +420,10 @@ class _ChatPageState extends State<ChatPage>
 
   @override
   void onGroupMessage(MessageChat messageChat) {
-    events.add(messageChat);
-    setState(() {});
+    setState(() {
+      events.add(messageChat);
+    });
+
     log('onGroupMessage: ${messageChat.toEventData()}');
   }
 
@@ -458,7 +460,6 @@ class _ChatPageState extends State<ChatPage>
 
     var from = presentModel.from?.split('@')[0];
     var to = widget.to.split('@')[0];
-    // if (presentModel.from == widget.to) {
     if (from == to) {
       setState(() {
         toIsOnLine = presentModel.presenceType == PresenceType.available;

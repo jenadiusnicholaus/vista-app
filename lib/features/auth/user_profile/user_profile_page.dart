@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           } else if (state is UserProfileError) {
-            return const Center(child: CircularProgressIndicator());
+            return logoutBtn();
           } else if (state is UserProfileLoaded) {
             return Center(
               child: Column(
@@ -79,49 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   // logut btn
-
-                  TextButton(
-                    onPressed: isLoggingOut
-                        ? null
-                        : () async {
-                            String? refresh_token =
-                                await LocalStorage.read(key: 'refresh_token');
-
-                            BlocProvider.of<EmailLoginBloc>(context)
-                                .add(LogoutUserEvent(
-                              refreshToken: refresh_token.toString(),
-                            ));
-                          },
-                    child: BlocConsumer<EmailLoginBloc, EmailLoginState>(
-                      listener: (context, state) {
-                        if (state is LogoutLoading) {
-                          setState(() {
-                            isLoggingOut = true;
-                          });
-                        }
-                        if (state is LogoutSuccess) {
-                          setState(() {
-                            isLoggingOut = false;
-                          });
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is LogoutLoading) {
-                          return const SpinKitWave(
-                            color: Colors.red,
-                            size: 20.0,
-                          );
-                        }
-                        return const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  logoutBtn()
                   // Add more widgets as needed
                 ],
               ),
@@ -131,6 +89,50 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(),
             );
           }
+        },
+      ),
+    );
+  }
+
+  logoutBtn() {
+    return TextButton(
+      onPressed: isLoggingOut
+          ? null
+          : () async {
+              String? refresh_token =
+                  await LocalStorage.read(key: 'refresh_token');
+
+              BlocProvider.of<EmailLoginBloc>(context).add(LogoutUserEvent(
+                refreshToken: refresh_token.toString(),
+              ));
+            },
+      child: BlocConsumer<EmailLoginBloc, EmailLoginState>(
+        listener: (context, state) {
+          if (state is LogoutLoading) {
+            setState(() {
+              isLoggingOut = true;
+            });
+          }
+          if (state is LogoutSuccess) {
+            setState(() {
+              isLoggingOut = false;
+            });
+          }
+        },
+        builder: (context, state) {
+          if (state is LogoutLoading) {
+            return const SpinKitWave(
+              color: Colors.red,
+              size: 20.0,
+            );
+          }
+          return const Text(
+            'Logout',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 16,
+            ),
+          );
         },
       ),
     );

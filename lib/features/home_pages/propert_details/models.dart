@@ -1,3 +1,5 @@
+import '../../../shared/models.dart';
+
 class PropertyDetailsModel {
   String? name;
   Category? category;
@@ -49,7 +51,7 @@ class PropertyDetailsModel {
   PropertyDetailsModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     category = json['category'] != null
-        ? new Category.fromJson(json['category'])
+        ? Category.fromJson(json['category'])
         : null;
     price = json['price'];
     currency = json['currency'];
@@ -62,31 +64,31 @@ class PropertyDetailsModel {
     latitude = json['latitude'];
     longitude = json['longitude'];
     image = json['image'];
-    host = json['host'] != null ? new Host.fromJson(json['host']) : null;
+    host = json['host'] != null ? Host.fromJson(json['host']) : null;
     availabilityStatus = json['availability_status'];
     publicationStatus = json['publication_status'];
     if (json['images'] != null) {
       images = <Images>[];
       json['images'].forEach((v) {
-        images!.add(new Images.fromJson(v));
+        images!.add(Images.fromJson(v));
       });
     }
     if (json['facilities'] != null) {
       facilities = <Facilities>[];
       json['facilities'].forEach((v) {
-        facilities!.add(new Facilities.fromJson(v));
+        facilities!.add(Facilities.fromJson(v));
       });
     }
     if (json['reviews'] != null) {
       reviews = <Reviews>[];
       json['reviews'].forEach((v) {
-        reviews!.add(new Reviews.fromJson(v));
+        reviews!.add(Reviews.fromJson(v));
       });
     }
     if (json['amenities'] != null) {
       amenities = <Amenities>[];
       json['amenities'].forEach((v) {
-        amenities!.add(new Amenities.fromJson(v));
+        amenities!.add(Amenities.fromJson(v));
       });
     }
     createdAt = json['created_at'];
@@ -94,174 +96,41 @@ class PropertyDetailsModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    if (this.category != null) {
-      data['category'] = this.category!.toJson();
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['name'] = name;
+    if (category != null) {
+      data['category'] = category!.toJson();
     }
-    data['price'] = this.price;
-    data['currency'] = this.currency;
-    data['period'] = this.period;
-    data['description'] = this.description;
-    data['address'] = this.address;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['image'] = this.image;
-    if (this.host != null) {
-      data['host'] = this.host!.toJson();
+    data['price'] = price;
+    data['currency'] = currency;
+    data['period'] = period;
+    data['description'] = description;
+    data['address'] = address;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
+    data['image'] = image;
+    if (host != null) {
+      data['host'] = host!.toJson();
     }
-    data['availability_status'] = this.availabilityStatus;
-    data['publication_status'] = this.publicationStatus;
-    if (this.images != null) {
-      data['images'] = this.images!.map((v) => v.toJson()).toList();
+    data['availability_status'] = availabilityStatus;
+    data['publication_status'] = publicationStatus;
+    if (images != null) {
+      data['images'] = images!.map((v) => v.toJson()).toList();
     }
-    if (this.facilities != null) {
-      data['facilities'] = this.facilities!.map((v) => v.toJson()).toList();
+    if (facilities != null) {
+      data['facilities'] = facilities!.map((v) => v.toJson()).toList();
     }
-    if (this.reviews != null) {
-      data['reviews'] = this.reviews!.map((v) => v.toJson()).toList();
+    if (reviews != null) {
+      data['reviews'] = reviews!.map((v) => v.toJson()).toList();
     }
-    if (this.amenities != null) {
-      data['amenities'] = this.amenities!.map((v) => v.toJson()).toList();
+    if (amenities != null) {
+      data['amenities'] = amenities!.map((v) => v.toJson()).toList();
     }
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
-class Category {
-  int? id;
-  String? name;
-  dynamic icon;
-  String? description;
-  String? createdAt;
-  String? updatedAt;
-
-  Category(
-      {this.id,
-      this.name,
-      this.icon,
-      this.description,
-      this.createdAt,
-      this.updatedAt});
-
-  Category.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    icon = json['icon'];
-    description = json['description'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['icon'] = this.icon;
-    data['description'] = this.description;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
-class Host {
-  int? id;
-  User? user;
-  int? propertyCount;
-  bool? isVerified;
-  String? createdAt;
-  String? updatedAt;
-
-  Host(
-      {this.id,
-      this.user,
-      this.propertyCount,
-      this.isVerified,
-      this.createdAt,
-      this.updatedAt});
-
-  Host.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
-    propertyCount = json['property_count'];
-    isVerified = json['is_verified'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
-    }
-    data['property_count'] = this.propertyCount;
-    data['is_verified'] = this.isVerified;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
-class User {
-  int? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? phoneNumber;
-  String? dateOfBirth;
-  bool? isActive;
-  bool? phoneIsVerified;
-  dynamic lastLogin;
-  String? dateJoined;
-  String? userProfilePic;
-
-  User(
-      {this.id,
-      this.email,
-      this.firstName,
-      this.lastName,
-      this.phoneNumber,
-      this.dateOfBirth,
-      this.isActive,
-      this.phoneIsVerified,
-      this.lastLogin,
-      this.dateJoined,
-      this.userProfilePic});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    phoneNumber = json['phone_number'];
-    dateOfBirth = json['date_of_birth'];
-    isActive = json['is_active'];
-    phoneIsVerified = json['phone_is_verified'];
-    lastLogin = json['last_login'];
-    dateJoined = json['date_joined'];
-    userProfilePic = json['user_profile_pic'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['email'] = this.email;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['phone_number'] = this.phoneNumber;
-    data['date_of_birth'] = this.dateOfBirth;
-    data['is_active'] = this.isActive;
-    data['phone_is_verified'] = this.phoneIsVerified;
-    data['last_login'] = this.lastLogin;
-    data['date_joined'] = this.dateJoined;
-    data['user_profile_pic'] = this.userProfilePic;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }
@@ -284,12 +153,12 @@ class Images {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['image'] = this.image;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['property'] = this.property;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['image'] = image;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['property'] = property;
     return data;
   }
 }
@@ -320,13 +189,13 @@ class Facilities {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['description'] = this.description;
-    data['facility'] = this.facility;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['property'] = this.property;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['description'] = description;
+    data['facility'] = facility;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['property'] = property;
     return data;
   }
 }
@@ -349,7 +218,7 @@ class Reviews {
 
   Reviews.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
     rating = json['rating'];
     comment = json['comment'];
     date = json['date'];
@@ -357,15 +226,15 @@ class Reviews {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
-    data['rating'] = this.rating;
-    data['comment'] = this.comment;
-    data['date'] = this.date;
-    data['property'] = this.property;
+    data['rating'] = rating;
+    data['comment'] = comment;
+    data['date'] = date;
+    data['property'] = property;
     return data;
   }
 }
@@ -399,14 +268,14 @@ class Amenities {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['is_available'] = this.isAvailable;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['property'] = this.property;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['name'] = name;
+    data['description'] = description;
+    data['is_available'] = isAvailable;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['property'] = property;
     return data;
   }
 }
