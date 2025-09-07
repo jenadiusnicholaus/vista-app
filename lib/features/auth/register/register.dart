@@ -15,7 +15,6 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-
 class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
   final _formKey = GlobalKey<FormState>();
   final _phoneNumberController = TextEditingController();
@@ -575,7 +574,7 @@ class _RegisterPageState extends State<RegisterPage> with RestorationMixin {
                           agreedToTerms: checked,
                         ));
                       }
-                      log('Agree and Continue');
+                      // log('Agree and Continue');
 
                       // Get.to(() => const AgrreOrDeclineTerms());
                     },

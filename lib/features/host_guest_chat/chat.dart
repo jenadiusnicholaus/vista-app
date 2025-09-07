@@ -322,7 +322,7 @@ class _ChatPageState extends State<ChatPage>
                   emojiViewConfig: const EmojiViewConfig(
                     backgroundColor: Colors.white,
                   ),
-                  swapCategoryAndBottomBar: true,
+                  // swapCategoryAndBottomBar: true,
                   skinToneConfig: const SkinToneConfig(),
                   categoryViewConfig: CategoryViewConfig(
                     backgroundColor: Colors.white,

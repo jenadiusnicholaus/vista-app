@@ -12,10 +12,10 @@ import 'package:vista/features/home_pages/propert_details/repository.dart';
 import 'package:vista/features/host_guest_chat/my_rosters/bloc/add_roster_bloc.dart';
 import 'package:vista/features/host_guest_chat/my_rosters/bloc/my_rosters_bloc.dart';
 import 'package:vista/shared/Theme/theming.dart';
-import 'package:vista/features/auth/email_login/email_login.dart';
+import 'package:vista/features/auth/email_login/stunning_email_login.dart';
+import 'package:vista/features/auth/login_welcome_screen.dart';
 import 'package:vista/features/search/search_property.dart';
 import 'package:vista/features/fcm/firebase_push_notification.dart';
-import 'package:vista/shared/utils/local_storage.dart';
 import 'features/auth/activate_account/bloc/activate_account_bloc.dart';
 import 'features/auth/confirm_reset_password/repository.dart';
 import 'features/auth/forget_password/bloc/forget_password_bloc.dart';
@@ -45,7 +45,6 @@ import 'features/renting_system/repository.dart';
 import 'shared/api_call/api.dart';
 import 'shared/environment.dart';
 
-import 'shared/token_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -57,19 +56,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await requestLocationPermission();
-  String? token = await LocalStorage.read(key: "access_token");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseApi().initializeFcmNotifications();
   await FirebaseApi().initLocalNotification();
 
-  if (token == null) {
-    runApp(const MyApp(isTokenExpired: true));
-    return;
-  }
-  bool isTokenExpired = TokenHandler.isExpired(token);
-  runApp(MyApp(isTokenExpired: isTokenExpired));
+  // Always start with welcome screen - no token checking
+  runApp(const MyApp(isTokenExpired: false));
 }
 
 class MyApp extends StatefulWidget {
@@ -254,12 +248,12 @@ class _MyAppState extends State<MyApp> {
                     Locale('ar', ''),
                   ],
                   routes: {
-                    '/login': (context) => const EmailLogin(),
+                    '/login': (context) => const StunningEmailLogin(),
                     '/home': (context) => const HomePage(),
                     '/search': (context) => const SearchProperty(),
                   },
                   debugShowCheckedModeBanner: false,
-                  home: const HomePage(),
+                  home: const LoginWelcomeScreen(),
                   theme: CustomTheme.lightTheme,
                   darkTheme: CustomTheme.darkTheme,
                   themeMode:

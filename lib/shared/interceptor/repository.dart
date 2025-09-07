@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vista/features/auth/email_login/email_login.dart';
+import 'package:vista/features/auth/email_login/stunning_email_login.dart';
 import 'package:vista/shared/token_handler.dart';
 import '../api_call/api.dart';
 import '../environment.dart';
@@ -18,12 +18,12 @@ class InterceptorRepository {
 
     bool isTokenExpired = TokenHandler.isExpired(refreshToken);
     if (isTokenExpired) {
-      Get.offAll(() => const EmailLogin());
+      Get.offAll(() => const StunningEmailLogin());
       throw Exception('Refresh token is expired');
     }
 
     if (refreshToken == null) {
-      Get.offAll(() => const EmailLogin());
+      Get.offAll(() => const StunningEmailLogin());
       throw Exception('Refresh token is expired');
     }
 

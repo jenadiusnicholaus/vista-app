@@ -5,8 +5,6 @@ import "package:firebase_messaging/firebase_messaging.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:vista/features/fcm/model.dart";
 import "package:vista/features/fcm/repository.dart";
-
-import "../../main.dart";
 import "../../shared/api_call/api.dart";
 import "../../shared/environment.dart";
 
@@ -232,18 +230,17 @@ iOSInitializationSettings() {
     requestAlertPermission: false,
     requestBadgePermission: false,
     requestSoundPermission: false,
-    onDidReceiveLocalNotification:
-        (int id, String? title, String? body, String? payload) async {
-      didReceiveLocalNotificationStream.add(
-        ReceivedNotification(
-          id: id,
-          title: title,
-          body: body,
-          payload: payload,
-        ),
-      );
-    },
-    notificationCategories: darwinNotificationCategories,
+    // newCallbackName:
+    //     (int id, String? title, String? body, String? payload) async {
+    //   didReceiveLocalNotificationStream.add(
+    //     ReceivedNotification(
+    //       id: id,
+    //       title: title,
+    //       body: body,
+    //       payload: payload,
+    //     ),
+    //   );
+    // },
   );
 
   return initializationSettingsDarwin;

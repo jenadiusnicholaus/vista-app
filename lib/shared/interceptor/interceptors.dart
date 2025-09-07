@@ -36,6 +36,7 @@ class TokensInterceptors extends Interceptor {
 
     List<String> ignoreSubUrls = [
       'authentication/',
+      'fcm/',
     ];
     if (refreshToken == null || isRefreshTokenExpired) {
       ignoreSubUrls.add("property/");

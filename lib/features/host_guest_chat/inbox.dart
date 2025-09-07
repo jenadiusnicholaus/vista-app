@@ -187,7 +187,7 @@ class _InboxPageState extends State<InboxPage>
                           Icon(Icons.person_outline),
                           Text(
                             "Not Contact",
-                            style: Theme.of(context).textTheme.caption,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),

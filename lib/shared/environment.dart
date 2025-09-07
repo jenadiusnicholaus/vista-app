@@ -20,7 +20,7 @@ class Environment {
   String PHONE_NUMBER_AUTH = "authentication/phone-number-auth/";
   String VERIFY_PHONE_NUMBER =
       "authentication/verify-phone-number-and-sign-up/";
-  String USER_REGISTRATION = "authentication/guest-registration/";
+  String USER_REGISTRATION = "authentication/user-registration/";
   String VERIFY_EMAI_URL = "authentication/activate-account/";
   String LOGIN_URL = "authentication/login/";
   String RESEND_OTP_URL = "authentication/resend-otp/";

@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
-import 'package:vista/features/auth/email_login/email_login.dart';
+import 'package:vista/features/auth/email_login/stunning_email_login.dart';
 import 'package:vista/features/auth/email_login/models.dart';
 import 'package:vista/features/auth/email_login/repository.dart';
 import 'package:vista/shared/utils/local_storage.dart';
@@ -54,7 +54,7 @@ class EmailLoginBloc extends Bloc<EmailLoginEvent, EmailLoginState> {
 
         emit(LogoutSuccess(
             "You have been successfully logged out. Please login to continue."));
-        Get.to(() => const EmailLogin());
+        Get.to(() => const StunningEmailLogin());
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
 

@@ -46,7 +46,7 @@ class WhatsAppCategoryViewState extends State<WhatsAppCategoryView>
   }
 
   Widget _buildBackspaceButton() {
-    if (widget.config.categoryViewConfig.showBackspaceButton) {
+    if (widget.config.bottomActionBarConfig.showBackspaceButton) {
       return BackspaceButton(
         widget.config,
         widget.state.onBackspacePressed,
@@ -165,7 +165,7 @@ class WhatsAppSearchViewState extends SearchViewState {
               children: [
                 IconButton(
                   onPressed: widget.showEmojiView,
-                  color: widget.config.searchViewConfig.buttonColor,
+                  color: widget.config.searchViewConfig.buttonIconColor,
                   icon: Icon(
                     Icons.arrow_back,
                     color: widget.config.searchViewConfig.buttonIconColor,

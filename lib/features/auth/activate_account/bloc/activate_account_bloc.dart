@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
+import 'package:vista/features/auth/email_login/stunning_email_login.dart';
 import 'package:vista/features/auth/activate_account/repository.dart';
-import 'package:vista/features/auth/email_login/email_login.dart';
 
 import '../../../../shared/error_handler.dart';
 
@@ -32,7 +32,7 @@ class ActivateAccountBloc
         emit(ActivateAccountSuccess('Email verified successfully'));
         if (response != null) {
           // Navigate to the next page
-          Get.to(() => const EmailLogin());
+          Get.to(() => const StunningEmailLogin());
         }
       } catch (e) {
         var errorMessage = ExceptionHandler.handleError(e);

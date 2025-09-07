@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
-import 'package:vista/features/auth/email_login/email_login.dart';
+import 'package:vista/features/auth/email_login/stunning_email_login.dart';
 import 'package:vista/features/auth/forget_password/models.dart';
 
 import '../../../../shared/error_handler.dart';
@@ -29,7 +29,7 @@ class ConfirmResetPasswordBloc
                 confirmPassword: event.confirmPassword,
                 token: event.token);
         emit(ConfirmResetPasswordSuccess(response: response));
-        Get.to(() => const EmailLogin());
+        Get.to(() => const StunningEmailLogin());
       } catch (e) {
         String errorMessage = ExceptionHandler.handleError(e);
 

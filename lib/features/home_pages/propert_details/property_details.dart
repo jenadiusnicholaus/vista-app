@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -94,7 +94,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CarouselSlider.builder(
+        carousel.CarouselSlider.builder(
           itemCount: state.propertyDetailsModel.images!.length,
           itemBuilder: (context, index, realIndex) {
             return Stack(
@@ -133,7 +133,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
               ],
             );
           },
-          options: CarouselOptions(
+          options: carousel.CarouselOptions(
             height: 190.h,
             viewportFraction: 1,
             enlargeCenterPage: true,
@@ -311,7 +311,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                               ),
                               subtitle: Text(
                                 element.description ?? '',
-                                style: Theme.of(context).textTheme.caption,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ))
                         .toList(), // Ensure the result is a List<Widget>
@@ -362,7 +362,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                               amenity.description ?? '',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.caption,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
                           const SizedBox(
@@ -664,7 +664,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                                 ? 'Request to Rent'
                                 : "Sold out"),
                           )
-                        else if ((widget.property.businessType == "booking"))
+                        else if ((widget.property.businessType == "reserve"))
                           ElevatedButton(
                             onPressed: (state is PropertyDetailsLoaded) &&
                                     (state.propertyDetailsModel

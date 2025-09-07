@@ -270,7 +270,7 @@ class _PropertyItemsState extends State<PropertyItems> {
         return "FOR RENT";
       case "sale":
         return "FOR SALE";
-      case "booking":
+      case "reserve":
         return "FOR BOOKING";
 
       default:
@@ -284,7 +284,7 @@ class _PropertyItemsState extends State<PropertyItems> {
         return Colors.green;
       case "sale":
         return Colors.red;
-      case "booking":
+      case "reserve":
         return Colors.blue;
 
       default:
