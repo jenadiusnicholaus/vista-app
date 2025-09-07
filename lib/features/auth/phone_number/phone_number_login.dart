@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' hide Transition;
-import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:vista/constants/custom_phone_field.dart';
 import 'package:vista/features/auth/email_login/stunning_email_login.dart';
 import 'bloc/phone_number_auth_bloc.dart';
 
@@ -79,12 +80,12 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF667eea)),
+            icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.primary),
             onPressed: () => Get.back(),
           ),
         ),
@@ -101,12 +102,12 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Enter your phone number',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2D3748),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -114,7 +115,7 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                       'We\'ll send you a verification code to confirm your number',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                         height: 1.4,
                       ),
                     ),
@@ -123,11 +124,11 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Theme.of(context).shadowColor.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -136,44 +137,34 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "Phone Number",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF2D3748),
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 12),
-                          IntlPhoneField(
+                          CustomPhoneField(
+                            controller: _phoneNumberController,
                             focusNode: _focusNode,
                             initialCountryCode: "TZ",
-                            controller: _phoneNumberController,
-                            languageCode: "en",
-                            decoration: InputDecoration(
-                              hintText: 'Enter your phone number',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF667eea),
-                                  width: 2,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey[50],
-                            ),
-                            onChanged: (phone) {
-                              log(phone.completeNumber);
-                              setState(() {
-                                _completePhoneNumber = phone.completeNumber;
-                              });
+                            hintText: 'Enter your phone number',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your phone number';
+                              }
+                              if (value.length < 10) {
+                                return 'Please enter a valid phone number';
+                              }
+                              return null;
                             },
-                            onCountryChanged: (country) {
-                              log('Country changed to: ${country.name}');
+                            onChanged: (phoneNumber) {
+                              log(phoneNumber);
+                              setState(() {
+                                _completePhoneNumber = phoneNumber;
+                              });
                             },
                           ),
                         ],
@@ -183,14 +174,14 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF667eea).withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.info_outline,
-                            color: Color(0xFF667eea),
+                            color: Theme.of(context).colorScheme.primary,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
@@ -199,7 +190,7 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                               "We'll send you a verification code. Standard message and data rates may apply.",
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey[700],
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                               ),
                             ),
                           ),
@@ -214,18 +205,18 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                       child: ElevatedButton(
                         onPressed: isLoading ? null : _handleSendOTP,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF667eea),
-                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          disabledBackgroundColor: Colors.grey[300],
+                          disabledBackgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
                         ),
                         child: BlocBuilder<PhoneNumberAuthBloc, PhoneNumberAuthState>(
                           builder: (context, state) {
                             if (state is PhoneNumberAuthLoading) {
-                              return const Row(
+                              return Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   SizedBox(
@@ -233,11 +224,11 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                                     height: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                                     ),
                                   ),
-                                  SizedBox(width: 12),
-                                  Text(
+                                  const SizedBox(width: 12),
+                                  const Text(
                                     'Sending...',
                                     style: TextStyle(
                                       fontSize: 16,
@@ -265,7 +256,7 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                         Expanded(
                           child: Container(
                             height: 1,
-                            color: Colors.grey[300],
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                         Padding(
@@ -273,7 +264,7 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                           child: Text(
                             'or',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               fontSize: 14,
                             ),
                           ),
@@ -281,7 +272,7 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                         Expanded(
                           child: Container(
                             height: 1,
-                            color: Colors.grey[300],
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                       ],
@@ -293,8 +284,8 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
                       child: OutlinedButton(
                         onPressed: () => Get.to(() => const StunningEmailLogin()),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF667eea),
-                          side: const BorderSide(color: Color(0xFF667eea)),
+                          foregroundColor: Theme.of(context).colorScheme.primary,
+                          side: BorderSide(color: Theme.of(context).colorScheme.primary),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -347,9 +338,9 @@ class _PhoneNumberLoginState extends State<PhoneNumberLogin> with TickerProvider
     Get.snackbar(
       'Error',
       message,
-      backgroundColor: Colors.red[100],
-      colorText: Colors.red[800],
-      icon: const Icon(Icons.error_outline, color: Colors.red),
+      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+      colorText: Theme.of(context).colorScheme.onErrorContainer,
+      icon: Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
       duration: const Duration(seconds: 3),

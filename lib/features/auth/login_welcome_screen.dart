@@ -97,10 +97,14 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                               ),
                             ],
                           ),
-                          child: Icon(
-                            Icons.home_work_outlined,
-                            size: 60.sp,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30.r),
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              width: 80.w,
+                              height: 80.h,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                         SizedBox(height: 32.h),
@@ -129,9 +133,9 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                   flex: 2,
                   child: SlideTransition(
                     position: _slideAnimation,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
                         _buildLoginButton(
                           title: 'Continue with Phone',
                           icon: Icons.phone_android,
@@ -141,7 +145,6 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                             duration: const Duration(milliseconds: 300),
                           ),
                         ),
-                        const SizedBox(height: 16),
                         _buildLoginButton(
                           title: 'Continue with Email',
                           icon: Icons.email_outlined,
@@ -151,9 +154,7 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                             duration: const Duration(milliseconds: 300),
                           ),
                         ),
-                        SizedBox(height: 16.h),
                         _buildDivider(),
-                        SizedBox(height: 16.h),
                         _buildSocialLoginButton(
                           title: 'Continue with Google',
                           icon: 'assets/images/google.webp',
@@ -161,7 +162,6 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                             // TODO: Implement Google Sign In
                           },
                         ),
-                        SizedBox(height: 12.h),
                         _buildSocialLoginButton(
                           title: 'Continue with Apple',
                           icon: Icons.apple,
@@ -169,9 +169,7 @@ class _LoginWelcomeScreenState extends State<LoginWelcomeScreen>
                             // TODO: Implement Apple Sign In
                           },
                         ),
-                        SizedBox(height: 16.h),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),

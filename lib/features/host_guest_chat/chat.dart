@@ -260,38 +260,27 @@ class _ChatPageState extends State<ChatPage>
                         focusNode: _focusNode,
                         controller: _smsTextController,
                         scrollController: _scrollController,
-                        decoration: InputDecoration(
-                          hintText: 'Type a message',
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(100.0),
-                            borderSide: const BorderSide(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(100.0),
-                            borderSide: const BorderSide(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          prefixIcon: Material(
-                            color: Colors.transparent,
-                            child: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _emojiShowing = !_emojiShowing;
-                                });
-                              },
-                              icon: _emojiShowing
-                                  ? const Icon(
-                                      Icons.cancel,
-                                      color: Colors.grey,
-                                    )
-                                  : const Icon(
-                                      Icons.emoji_emotions_outlined,
-                                      color: Colors.grey,
-                                    ),
-                            ),
+                        hintText: 'Type a message',
+                        borderRadius: 100.0,
+                        borderColor: Colors.grey,
+                        focusedBorderColor: Colors.grey,
+                        prefixIcon: Material(
+                          color: Colors.transparent,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _emojiShowing = !_emojiShowing;
+                              });
+                            },
+                            icon: _emojiShowing
+                                ? const Icon(
+                                    Icons.cancel,
+                                    color: Colors.grey,
+                                  )
+                                : const Icon(
+                                    Icons.emoji_emotions_outlined,
+                                    color: Colors.grey,
+                                  ),
                           ),
                         ),
                       ),

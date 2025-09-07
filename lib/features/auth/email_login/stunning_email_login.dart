@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vista/shared/utils/local_storage.dart';
 import 'package:vista/features/auth/phone_number/phone_number_login.dart';
-import 'package:vista/constants/consts.dart';
+import 'package:vista/features/auth/forget_password/forget_password_page.dart';
 import 'package:vista/constants/custom_form_field.dart';
 import 'bloc/email_login_bloc.dart';
 
@@ -225,7 +225,7 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
           style: TextStyle(
             fontSize: 28.sp,
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
@@ -268,14 +268,14 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
             _buildForgotPassword(),
             SizedBox(height: 32.h),
             _buildLoginButton(),
+            SizedBox(height: 16.h),
+            _buildSignUpLink(),
             SizedBox(height: 24.h),
             _buildDivider(),
             SizedBox(height: 24.h),
             _buildSocialButtons(),
             SizedBox(height: 24.h),
             _buildPhoneLoginButton(),
-            SizedBox(height: 16.h),
-            _buildSignUpLink(),
           ],
         ),
       ),
@@ -283,262 +283,86 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
   }
 
   Widget _buildEmailField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Email Address',
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        CustomTextFormField(
-          controller: _emailController,
-          labelText: 'Enter your email address',
-          decoration: InputDecoration(
-            hintText: 'Enter your email address',
-            hintStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              fontSize: 16.sp,
-            ),
-            prefixIcon: Icon(
-              Icons.email_outlined,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              size: 20.sp,
-            ),
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error, width: 2),
-            ),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your email';
-            }
-            if (!GetUtils.isEmail(value)) {
-              return 'Please enter a valid email';
-            }
-            return null;
-          },
-        ),
-      ],
+    return CustomTextFormField(
+      controller: _emailController,
+      labelText: 'Email Address',
+      hintText: 'Enter your email address',
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      prefixIcon: Icon(
+        Icons.email_outlined,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        size: 20.sp,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email address';
+        }
+        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          return 'Please enter a valid email address';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildPasswordField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Password',
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+    return CustomTextFormField(
+      controller: _passwordController,
+      labelText: 'Password',
+      hintText: 'Enter your password',
+      obscureText: _obscurePassword,
+      textInputAction: TextInputAction.done,
+      prefixIcon: Icon(
+        Icons.lock_outline,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        size: 20.sp,
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          size: 20.sp,
         ),
-        SizedBox(height: 8.h),
-        CustomTextFormField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          labelText: 'Enter your password',
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscurePassword ? Icons.visibility_off : Icons.visibility,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              size: 20.sp,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscurePassword = !_obscurePassword;
-              });
-            },
-          ),
-          decoration: InputDecoration(
-            hintText: 'Enter your password',
-            hintStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              fontSize: 16.sp,
-            ),
-            prefixIcon: Icon(
-              Icons.lock_outline,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              size: 20.sp,
-            ),
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error, width: 2),
-            ),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your password';
-            }
-            if (value.length < 6) {
-              return 'Password must be at least 6 characters';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForgotPassword() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
         onPressed: () {
-          // TODO: Navigate to forgot password page
+          setState(() {
+            _obscurePassword = !_obscurePassword;
+          });
         },
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.zero,
-        ),
-        child: Text(
-          'Forgot Password?',
-          style: TextStyle(
-            color: const Color(0xFF667eea),
-            fontWeight: FontWeight.w600,
-            fontSize: 14.sp,
-          ),
-        ),
       ),
-    );
-  }
-
-  Widget _buildSocialButtons() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildSocialButton(
-                icon: Icons.g_mobiledata,
-                label: 'Google',
-                color: const Color(0xFFDB4437),
-                onTap: () {
-                  // TODO: Implement Google Sign In
-                },
-              ),
-            ),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: _buildSocialButton(
-                icon: Icons.apple,
-                label: 'Apple',
-                color: Theme.of(context).colorScheme.onSurface,
-                onTap: () {
-                  // TODO: Implement Apple Sign In
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 48.h,
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).dividerColor),
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: color,
-              size: 20.sp,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ],
-        ),
-      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        if (value.length < 6) {
+          return 'Password must be at least 6 characters';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildLoginButton() {
     return SizedBox(
       width: double.infinity,
-      height: 52.h,
+      height: 56.h,
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             context.read<EmailLoginBloc>().add(
-                  EmailLoginButtonPressed(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  ),
-                );
+              EmailLoginButtonPressed(
+                email: _emailController.text,
+                password: _passwordController.text,
+              ),
+            );
           }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(16.r),
           ),
         ),
         child: BlocBuilder<EmailLoginBloc, EmailLoginState>(
@@ -553,7 +377,8 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.onPrimary),
+                        Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -579,6 +404,190 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Text(
+            'or',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 14.sp,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButtons() {
+    return Column(
+      children: [
+        _buildSocialButton(
+          'Continue with Google',
+          'assets/images/google.webp',
+          () {
+            // TODO: Implement Google Sign In
+          },
+        ),
+        SizedBox(height: 12.h),
+        _buildSocialButton(
+          'Continue with Apple',
+          Icons.apple,
+          () {
+            // TODO: Implement Apple Sign In
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton(
+    String title,
+    dynamic icon,
+    VoidCallback onTap,
+  ) {
+    return Container(
+      width: double.infinity,
+      height: 56.h,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Row(
+              children: [
+                if (icon is String)
+                  Image.asset(
+                    icon,
+                    width: 24.w,
+                    height: 24.h,
+                  )
+                else
+                  Icon(
+                    icon as IconData,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    size: 24.sp,
+                  ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 56.h,
+      child: OutlinedButton(
+        onPressed: () => Get.to(() => const PhoneNumberLogin()),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          side: BorderSide(color: Theme.of(context).colorScheme.primary),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.phone_android, size: 20.sp),
+            SizedBox(width: 8.w),
+            Text(
+              'Continue with Phone',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPassword() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () {
+          Get.to(() => const FogetPasswordPage());
+        },
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w600,
+            fontSize: 14.sp,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleLogin() {
+    if (_formKey.currentState!.validate()) {
+      BlocProvider.of<EmailLoginBloc>(context).add(
+        EmailLoginButtonPressed(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
+      LocalStorage.write(key: 'vc', value: _passwordController.text);
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    Get.snackbar(
+      'Error',
+      message,
+      backgroundColor: Colors.red[100],
+      colorText: Colors.red[800],
+      icon: const Icon(Icons.error_outline, color: Colors.red),
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
     );
   }
 
@@ -611,92 +620,6 @@ class _StunningEmailLoginState extends State<StunningEmailLogin>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.grey[300],
-            thickness: 1,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text(
-            'OR',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.grey[300],
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPhoneLoginButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton(
-        onPressed: () => Get.to(() => const PhoneNumberLogin()),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
-          side: BorderSide(color: Colors.white.withOpacity(0.5)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.phone_android, size: 20),
-            SizedBox(width: 8),
-            Text(
-              'Continue with Phone',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      BlocProvider.of<EmailLoginBloc>(context).add(
-        EmailLoginButtonPressed(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        ),
-      );
-      LocalStorage.write(key: 'vc', value: _passwordController.text);
-    }
-  }
-
-  void _showErrorSnackbar(String message) {
-    Get.snackbar(
-      'Error',
-      message,
-      backgroundColor: Colors.red[100],
-      colorText: Colors.red[800],
-      icon: const Icon(Icons.error_outline, color: Colors.red),
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 3),
     );
   }
 }

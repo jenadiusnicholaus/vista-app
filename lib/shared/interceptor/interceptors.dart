@@ -99,7 +99,14 @@ class TokensInterceptors extends Interceptor {
         handler.resolve(clonedRequest);
       } catch (e) {
         log('Failed to refresh token: $e');
-        handler.next(err);
+        // When refresh token fails, reject the request instead of continuing
+        // This prevents further API calls after redirect to login
+        handler.reject(DioException(
+          requestOptions: err.requestOptions,
+          error: 'Authentication failed: $e',
+          type: DioExceptionType.badResponse,
+          response: err.response,
+        ));
       }
     } else {
       handler.next(err);

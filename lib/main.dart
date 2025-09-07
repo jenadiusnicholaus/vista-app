@@ -13,7 +13,7 @@ import 'package:vista/features/host_guest_chat/my_rosters/bloc/add_roster_bloc.d
 import 'package:vista/features/host_guest_chat/my_rosters/bloc/my_rosters_bloc.dart';
 import 'package:vista/shared/Theme/theming.dart';
 import 'package:vista/features/auth/email_login/stunning_email_login.dart';
-import 'package:vista/features/auth/login_welcome_screen.dart';
+import 'package:vista/app_initializer.dart';
 import 'package:vista/features/search/search_property.dart';
 import 'package:vista/features/fcm/firebase_push_notification.dart';
 import 'features/auth/activate_account/bloc/activate_account_bloc.dart';
@@ -253,7 +253,7 @@ class _MyAppState extends State<MyApp> {
                     '/search': (context) => const SearchProperty(),
                   },
                   debugShowCheckedModeBanner: false,
-                  home: const LoginWelcomeScreen(),
+                  home: const AppInitializer(),
                   theme: CustomTheme.lightTheme,
                   darkTheme: CustomTheme.darkTheme,
                   themeMode:
